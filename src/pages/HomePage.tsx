@@ -370,19 +370,98 @@ function HomePage() {
         </Link>
       </section>
 
-      <footer className="site-footer">
-        <a className="brand" href="#top">
-          <span className="brand-mark" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </span>
-          <span>NotebookLM</span>
-        </a>
-        <p>© 2026 NotebookLM. Made for curious minds.</p>
-        <div>
-          <a href="#about">Privacy</a>
-          <a href="#about">Terms</a>
+      <footer className="site-footer" aria-label="NotebookLM footer">
+        <div className="footer-main">
+          <section className="footer-brand-column" aria-label="About NotebookLM">
+            <a className="brand footer-brand" href="#top" aria-label="Back to top">
+              <span className="brand-mark" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </span>
+              <span>NotebookLM</span>
+            </a>
+            <p>
+              A calmer place to collect sources, discover connections, and
+              turn curiosity into clear thinking.
+            </p>
+            <Link
+              id="footer-start-notebook"
+              className="footer-cta"
+              to="/auth?mode=signup"
+            >
+              Start a notebook <ArrowRight size={15} aria-hidden="true" />
+            </Link>
+          </section>
+
+          <nav className="footer-links" aria-label="Footer navigation">
+            <div className="footer-link-group">
+              <p>Product</p>
+              <a href="#how-it-works">How it works</a>
+              <a href="#features">Features</a>
+              <a href="#get-started">Get started</a>
+            </div>
+            <div className="footer-link-group">
+              <p>Explore</p>
+              <a href="#features">Research guides</a>
+              <a href="#how-it-works">Source library</a>
+              <a href="mailto:hello@notebooklm.app">Help center</a>
+            </div>
+            <div className="footer-link-group">
+              <p>Company</p>
+              <a href="#about">Our story</a>
+              <a href="mailto:hello@notebooklm.app">Contact us</a>
+              <a href="#top">Updates</a>
+            </div>
+          </nav>
+
+          <section className="footer-connect" aria-labelledby="footer-connect-title">
+            <p id="footer-connect-title">Stay in the loop</p>
+            <a className="footer-email" href="mailto:hello@notebooklm.app">
+              hello@notebooklm.app
+              <ArrowRight size={14} aria-hidden="true" />
+            </a>
+            <div className="footer-socials" aria-label="Social channels">
+              <a
+                id="footer-linkedin"
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="NotebookLM on LinkedIn"
+              >
+                in
+              </a>
+              <a
+                id="footer-x"
+                href="https://x.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="NotebookLM on X"
+              >
+                𝕏
+              </a>
+              <a
+                id="footer-instagram"
+                href="https://www.instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="NotebookLM on Instagram"
+              >
+                ◎
+              </a>
+            </div>
+          </section>
+        </div>
+
+        <div className="footer-bottom">
+          <p>© {new Date().getFullYear()} NotebookLM. Made for curious minds.</p>
+          <div className="footer-legal">
+            <span className="footer-status">
+              <i aria-hidden="true" /> All systems clear
+            </span>
+            <a href="#about">Privacy</a>
+            <a href="#about">Terms</a>
+          </div>
         </div>
       </footer>
     </main>

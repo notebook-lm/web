@@ -107,7 +107,7 @@ function AuthForm() {
       </form>
 
       <div className="auth-divider">
-        <span>or continue with</span>
+        <span>Or continue with</span>
       </div>
 
       <button className="oauth-button" type="button">
