@@ -85,15 +85,15 @@ Use source tokens only to establish the system. Components must consume semantic
 
 Every component must define and implement these states:
 
-| State | Required behavior |
-| --- | --- |
-| Default | Must show its normal semantic surface, label, and affordance. |
-| Hover | Must provide a non-motion cue for fine pointers. |
-| Focus-visible | Must show `--focus-outline` with `--focus-offset`; focus must never be hidden. |
-| Active | Must remain visibly engaged while pressed or selected. |
-| Disabled | Must prevent activation, communicate unavailable status, and retain readable contrast. |
-| Loading | Must preserve layout, prevent duplicate actions, and expose progress text. |
-| Error | Must preserve input where possible, identify the problem in text, and offer recovery. |
+| State         | Required behavior                                                                      |
+| ------------- | -------------------------------------------------------------------------------------- |
+| Default       | Must show its normal semantic surface, label, and affordance.                          |
+| Hover         | Must provide a non-motion cue for fine pointers.                                       |
+| Focus-visible | Must show `--focus-outline` with `--focus-offset`; focus must never be hidden.         |
+| Active        | Must remain visibly engaged while pressed or selected.                                 |
+| Disabled      | Must prevent activation, communicate unavailable status, and retain readable contrast. |
+| Loading       | Must preserve layout, prevent duplicate actions, and expose progress text.             |
+| Error         | Must preserve input where possible, identify the problem in text, and offer recovery.  |
 
 ### App header and navigation
 
@@ -159,17 +159,17 @@ Every component must define and implement these states:
 
 The app must meet WCAG 2.2 AA.
 
-| Requirement | Pass condition |
-| --- | --- |
-| Keyboard operation | Every interactive element can be reached and operated using keyboard alone; there is no unintended keyboard trap. |
-| Focus visibility | Every keyboard-focused control displays a visible 2px indicator with 2px separation from adjacent content. |
-| Contrast | Normal text meets 4.5:1, large text meets 3:1, and essential controls, icons, boundaries, and focus indicators meet 3:1. |
-| Target size | Every pointer target is at least 24 × 24 CSS px; primary and compact touch controls provide 44 × 44 CSS px or equivalent spacing. |
-| Semantic names | Every control has a descriptive programmatic name; meaningful images have suitable text alternatives. |
-| Forms | Every input has an associated label; errors are textual and expose `aria-invalid` plus a description. |
-| Dynamic updates | Loading, result counts, success, and errors are announced once through correctly scoped live regions. |
-| Zoom and reflow | At 400% zoom and 320 CSS px viewport width, content reflows without two-dimensional page scrolling or lost actions. |
-| Motion | Reduced-motion preference removes non-essential animation without hiding meaning. |
+| Requirement        | Pass condition                                                                                                                    |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| Keyboard operation | Every interactive element can be reached and operated using keyboard alone; there is no unintended keyboard trap.                 |
+| Focus visibility   | Every keyboard-focused control displays a visible 2px indicator with 2px separation from adjacent content.                        |
+| Contrast           | Normal text meets 4.5:1, large text meets 3:1, and essential controls, icons, boundaries, and focus indicators meet 3:1.          |
+| Target size        | Every pointer target is at least 24 × 24 CSS px; primary and compact touch controls provide 44 × 44 CSS px or equivalent spacing. |
+| Semantic names     | Every control has a descriptive programmatic name; meaningful images have suitable text alternatives.                             |
+| Forms              | Every input has an associated label; errors are textual and expose `aria-invalid` plus a description.                             |
+| Dynamic updates    | Loading, result counts, success, and errors are announced once through correctly scoped live regions.                             |
+| Zoom and reflow    | At 400% zoom and 320 CSS px viewport width, content reflows without two-dimensional page scrolling or lost actions.               |
+| Motion             | Reduced-motion preference removes non-essential animation without hiding meaning.                                                 |
 
 Automated accessibility checks must run in CI for critical routes. Manual keyboard, screen-reader, zoom/reflow, and contrast checks must happen before release.
 
@@ -182,13 +182,13 @@ Use concise, confident, task-first language.
 - Empty states should state the situation in one sentence, then offer the next action.
 - Errors must name the failure, preserve useful context, and offer recovery.
 
-| Situation | Use | Do not use |
-| --- | --- | --- |
-| Create | “New notebook” | “Add” |
-| Empty state | “No notebooks yet. Create one to begin adding sources.” | “Nothing here.” |
-| Search miss | “No notebooks match ‘biology’. Clear search.” | “No results.” |
-| Failure | “We couldn’t load your notebooks. Try again.” | “Error 500.” |
-| Destructive action | “Delete notebook” | “Remove” |
+| Situation          | Use                                                     | Do not use      |
+| ------------------ | ------------------------------------------------------- | --------------- |
+| Create             | “New notebook”                                          | “Add”           |
+| Empty state        | “No notebooks yet. Create one to begin adding sources.” | “Nothing here.” |
+| Search miss        | “No notebooks match ‘biology’. Clear search.”           | “No results.”   |
+| Failure            | “We couldn’t load your notebooks. Try again.”           | “Error 500.”    |
+| Destructive action | “Delete notebook”                                       | “Remove”        |
 
 ## Anti-patterns and prohibited implementations
 
