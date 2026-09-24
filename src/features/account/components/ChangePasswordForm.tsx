@@ -16,6 +16,7 @@ export function ChangePasswordForm() {
   const { clearAuth } = useAuthSession();
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
   const { mutateAsync: changePassword } = useChangePassword();
   const {
     register,
@@ -101,13 +102,24 @@ export function ChangePasswordForm() {
           <p className="text-xs text-[#b64034]">{errors.newPassword.message}</p>
         )}
         <label htmlFor="confirm-account-password">Confirm new password</label>
-        <input
-          id="confirm-account-password"
-          className="min-h-11 rounded-lg bg-[#f7f9f7] px-3"
-          type={type}
-          autoComplete="new-password"
-          {...register("confirmPassword")}
-        />
+        <div className="flex min-h-11 items-center rounded-lg bg-[#f7f9f7] px-3">
+          <input
+            id="confirm-account-password"
+            className="min-w-0 flex-1 bg-transparent outline-none"
+            type={confirmVisible ? "text" : "password"}
+            autoComplete="new-password"
+            {...register("confirmPassword")}
+          />
+          <button
+            type="button"
+            aria-label={
+              confirmVisible ? "Hide confirmation password" : "Show confirmation password"
+            }
+            onClick={() => setConfirmVisible((value) => !value)}
+          >
+            {confirmVisible ? <EyeOff size={17} /> : <Eye size={17} />}
+          </button>
+        </div>
         {errors.confirmPassword ? (
           <p className="text-xs text-[#b64034]">
             {errors.confirmPassword.message}
