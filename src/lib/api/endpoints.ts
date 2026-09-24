@@ -5,6 +5,10 @@ export const endpoints = {
     refresh: "/api/v1/auth/refresh",
     logout: "/api/v1/auth/logout",
   },
+  projects: {
+    collection: "/api/v1/projects",
+    byId: (projectId: string) => `/api/v1/projects/${projectId}`,
+  },
   account: {
     currentUser: "/api/v1/users/me",
     email: "/api/v1/users/me/email",
