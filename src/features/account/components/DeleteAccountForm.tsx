@@ -1,7 +1,7 @@
 import { AlertTriangle, Check, ShieldAlert } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { paths } from "@/routes/config/paths";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
@@ -91,12 +91,6 @@ export function DeleteAccountForm() {
           >
             {isSubmitting ? "Deleting…" : "Delete account"}
           </button>
-          <Link
-            className="inline-flex min-h-[42px] items-center justify-center rounded-lg border-0 bg-[#eff8f5] px-4 text-sm font-bold text-violet hover:bg-[#eff8f5]"
-            to={paths.profile}
-          >
-            Cancel
-          </Link>
         </div>
       </form>
     </div>

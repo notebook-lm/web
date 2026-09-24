@@ -16,7 +16,7 @@ import { paths } from "@/routes/config/paths";
 import { signUpSchema, type SignUpValues } from "@/shared/utils/validators";
 
 const field =
-  "flex min-h-[46px] items-center gap-2 rounded-lg bg-[#f4f7f4] px-3 text-[#7b8985] focus-within:bg-white";
+  "flex min-h-[46px] items-center gap-2 rounded-lg bg-[#f4f7f4] px-3 text-[#7b8985]";
 
 export function SignUpForm() {
   const navigate = useNavigate();
@@ -29,11 +29,21 @@ export function SignUpForm() {
     formState: { errors, isSubmitting },
   } = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
-    defaultValues: { displayName: "", email: "", password: "" },
+    defaultValues: {
+      displayName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
   const submit = async (values: SignUpValues) => {
+    const payload = {
+      displayName: values.displayName,
+      email: values.email,
+      password: values.password,
+    };
     try {
-      await signUp(values);
+      await signUp(payload);
       reset();
       toast.success("Account created. Please sign in.");
       navigate(paths.signIn, { replace: true });
@@ -101,6 +111,21 @@ export function SignUpForm() {
           </div>
           {errors.password && (
             <p className="text-[#b64034]">{errors.password.message}</p>
+          )}
+        </label>
+        <label className="grid gap-2 text-xs font-bold text-[#485752]">
+          Confirm password
+          <div className={field}>
+            <LockKeyhole size={17} />
+            <input
+              className="min-w-0 flex-1 outline-none"
+              type={visible ? "text" : "password"}
+              autoComplete="new-password"
+              {...register("confirmPassword")}
+            />
+          </div>
+          {errors.confirmPassword && (
+            <p className="text-[#b64034]">{errors.confirmPassword.message}</p>
           )}
         </label>
         <button

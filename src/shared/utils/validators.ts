@@ -21,11 +21,17 @@ export const signInSchema = z.object({
   password: passwordSchema,
 });
 
-export const signUpSchema = z.object({
-  displayName: displayNameSchema,
-  email: emailSchema,
-  password: passwordSchema,
-});
+export const signUpSchema = z
+  .object({
+    displayName: displayNameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .refine(({ password, confirmPassword }) => password === confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match.",
+  });
 
 export const projectTitleSchema = z
   .string()

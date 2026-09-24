@@ -9,7 +9,7 @@ import { signInSchema, type SignInValues } from "@/shared/utils/validators";
 import { useSignIn } from "@/features/authentication";
 
 const field =
-  "flex min-h-[46px] items-center gap-2 rounded-lg border-0 bg-[#f4f7f4] px-3 text-[#7b8985] focus-within:bg-white";
+  "flex min-h-[46px] items-center gap-2 rounded-lg border-0 bg-[#f4f7f4] px-3 text-[#7b8985]";
 
 export function SignInForm() {
   const navigate = useNavigate();
