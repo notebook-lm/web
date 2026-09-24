@@ -6,6 +6,10 @@ export const permissions = [
   "user:self:email:update",
   "user:self:password:update",
   "user:self:delete",
+  "project:read",
+  "project:create",
+  "project:update",
+  "project:delete",
 ] as const;
 
 export type Permission = (typeof permissions)[number];

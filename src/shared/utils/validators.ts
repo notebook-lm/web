@@ -27,6 +27,20 @@ export const signUpSchema = z.object({
   password: passwordSchema,
 });
 
+export const projectTitleSchema = z
+  .string()
+  .trim()
+  .min(1, "Project title is required.")
+  .max(150, "Project title must contain at most 150 characters.");
+
+export const projectSchema = z.object({
+  title: projectTitleSchema,
+  description: z
+    .string()
+    .trim()
+    .max(2000, "Description must contain at most 2,000 characters."),
+});
+
 export const updateProfileSchema = z.object({ displayName: displayNameSchema });
 
 export const changeEmailSchema = z.object({
@@ -55,6 +69,8 @@ export const deleteAccountSchema = z.object({
 export type SignInValues = z.infer<typeof signInSchema>;
 
 export type SignUpValues = z.infer<typeof signUpSchema>;
+
+export type ProjectValues = z.infer<typeof projectSchema>;
 
 export type UpdateProfileValues = z.infer<typeof updateProfileSchema>;
 

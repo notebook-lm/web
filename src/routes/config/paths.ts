@@ -4,6 +4,8 @@ export const paths = {
   signUp: "/register",
   legacyAuth: "/auth",
   workspace: "/app",
+  newProject: "/app/projects/new",
+  project: "/app/projects/:projectId",
   profile: "/profile",
   editProfile: "/profile/edit",
   changeEmail: "/profile/change-email",
