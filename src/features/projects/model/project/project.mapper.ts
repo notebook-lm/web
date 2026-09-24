@@ -1,4 +1,4 @@
-import type { ProjectResponse } from "../api";
+import type { ProjectResponse } from "../../api";
 import type { Project } from "./project.model";
 
 export function toProject(response: ProjectResponse): Project {

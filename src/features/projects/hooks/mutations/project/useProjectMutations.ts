@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query";
-import { projectRepository } from "../../api";
+import { projectRepository } from "../../../api";
 
 export function useCreateProject() {
   const queryClient = useQueryClient();

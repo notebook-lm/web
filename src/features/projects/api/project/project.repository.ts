@@ -1,4 +1,4 @@
-import { toProject } from "../model";
+import { toProject } from "../../model";
 import { projectApi } from "./project.api";
 import type { CreateProjectRequest, UpdateProjectRequest } from "./project.dto";
 
