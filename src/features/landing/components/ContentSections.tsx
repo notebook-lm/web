@@ -1,6 +1,6 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import { howItWorksSteps, productFeatures } from "./home-content";
 
 export function HowItWorksSection() {

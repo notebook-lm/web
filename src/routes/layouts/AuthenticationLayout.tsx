@@ -1,10 +1,10 @@
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import { SignInForm } from "@/features/authentication";
 import { SignUpForm } from "@/features/authentication";
 import { Brand } from "@/ui/Brand";
-import { authenticationCopy } from "./authentication-copy";
+import { authenticationCopy } from "../config/authentication-copy";
 import { AuthenticationBenefits } from "./AuthenticationBenefits";
 
 type AuthenticationMode = "login" | "register";

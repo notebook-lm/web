@@ -4,7 +4,7 @@ import { StrictMode, type ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthSessionProvider } from "@/features/authentication";
-import { queryClient } from "@/lib/query-client";
+import { queryClient } from "@/lib/query";
 import { ScrollToTop } from "@/shared/utils/ScrollToTop";
 
 export interface AppProvidersProps {

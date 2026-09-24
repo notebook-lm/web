@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { authenticationBenefits } from "./authentication-copy";
+import { authenticationBenefits } from "../config/authentication-copy";
 
 export function AuthenticationBenefits() {
   return (

@@ -1,6 +1,6 @@
 import { FolderKanban, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import { cn } from "@/shared/utils/cn";
 import { Brand } from "@/ui/Brand";
 

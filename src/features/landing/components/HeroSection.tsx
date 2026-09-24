@@ -1,6 +1,6 @@
 import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import { ProductPreview } from "./ProductPreview";
 
 export function HeroSection() {

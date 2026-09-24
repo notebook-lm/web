@@ -14,7 +14,7 @@ import { GuestGuard } from "./guards/GuestGuard";
 import { PermissionGuard } from "./guards/PermissionGuard";
 import { AccountSettingsLayout } from "./layouts/AccountSettingsLayout";
 import { AppLayout } from "./layouts/AppLayout";
-import { paths } from "./paths";
+import { paths } from "./config/paths";
 
 const AuthenticationLayout = lazy(() =>
   import("./layouts/AuthenticationLayout").then(

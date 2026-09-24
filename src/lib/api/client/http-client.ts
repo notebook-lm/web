@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { createApiClient, type ApiClient } from "@/lib/create-api-client";
+import { createApiClient, type ApiClient } from "./create-api-client";
 
 type SessionBridge = {
   getAccessToken: () => string | undefined;

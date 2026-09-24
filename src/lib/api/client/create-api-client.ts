@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance, type Method } from "axios";
-import type { ApiErrorResponse } from "@/shared/types/api-error";
+import type { ApiErrorResponse } from "@/shared/errors/api-error";
 
 export interface ApiClient {
   get<T>(path: string): Promise<T>;

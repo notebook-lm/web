@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { paths } from "../paths";
+import { paths } from "../config/paths";
 import { useAuthSession } from "@/features/authentication";
 import { RouteLoading } from "@/shared/components";
 
