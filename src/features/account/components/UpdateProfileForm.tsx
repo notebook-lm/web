@@ -5,12 +5,12 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import {
   updateProfileSchema,
   type UpdateProfileValues,
 } from "@/shared/utils/validators";
-import { useUpdateProfile } from "../hooks/useAccountMutations";
+import { useUpdateProfile } from "../hooks/mutations/useAccountMutations";
 
 export function UpdateProfileForm() {
   const { user } = useAuthSession();

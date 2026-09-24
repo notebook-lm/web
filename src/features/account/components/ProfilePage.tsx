@@ -1,6 +1,6 @@
 import { AtSign, BadgeCheck, Pencil, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import { useAuthSession } from "@/features/authentication";
 import { ProfileDetailRow } from "./ProfileDetailRow";
 

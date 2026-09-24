@@ -5,12 +5,12 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import {
   changePasswordSchema,
   type ChangePasswordValues,
 } from "@/shared/utils/validators";
-import { useChangePassword } from "../hooks/useAccountMutations";
+import { useChangePassword } from "../hooks/mutations/useAccountMutations";
 
 export function ChangePasswordForm() {
   const { clearAuth } = useAuthSession();

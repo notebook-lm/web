@@ -5,7 +5,7 @@ import {
   UserRound,
   type LucideIcon,
 } from "lucide-react";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 
 export type AccountSettingsNavigationItem = {
   label: string;

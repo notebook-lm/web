@@ -2,10 +2,10 @@ import { Mail, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
-import { useChangeEmail } from "../hooks/useAccountMutations";
+import { useChangeEmail } from "../hooks/mutations/useAccountMutations";
 import {
   changeEmailSchema,
   type ChangeEmailValues,

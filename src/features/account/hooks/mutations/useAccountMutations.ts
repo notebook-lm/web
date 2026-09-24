@@ -1,29 +1,29 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/lib/query-keys";
-import { accountService } from "@/lib/services/account.service";
+import { accountRepository } from "../../api";
+import { queryKeys } from "@/lib/query";
 
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: accountService.updateProfile,
-    onSuccess: (user) =>
-      queryClient.setQueryData(queryKeys.account.currentUser(), user),
+    mutationFn: accountRepository.updateProfile,
+    onSuccess: (response) =>
+      queryClient.setQueryData(queryKeys.account.currentUser(), response),
   });
 }
 
 export function useChangeEmail() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: accountService.changeEmail,
-    onSuccess: (user) =>
-      queryClient.setQueryData(queryKeys.account.currentUser(), user),
+    mutationFn: accountRepository.changeEmail,
+    onSuccess: (response) =>
+      queryClient.setQueryData(queryKeys.account.currentUser(), response),
   });
 }
 
 export function useChangePassword() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: accountService.changePassword,
+    mutationFn: accountRepository.changePassword,
     onSuccess: () =>
       void queryClient.invalidateQueries({
         queryKey: queryKeys.account.currentUser(),
@@ -34,7 +34,7 @@ export function useChangePassword() {
 export function useDeleteAccount() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: accountService.deleteAccount,
+    mutationFn: accountRepository.deleteAccount,
     onSuccess: () =>
       queryClient.removeQueries({ queryKey: queryKeys.account.currentUser() }),
   });

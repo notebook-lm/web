@@ -15,4 +15,4 @@ export {
   useChangeEmail,
   useChangePassword,
   useDeleteAccount,
-} from "./hooks/useAccountMutations";
+} from "./hooks/mutations/useAccountMutations";

@@ -2,10 +2,10 @@ import { AlertTriangle, Check, ShieldAlert } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
-import { useDeleteAccount } from "../hooks/useAccountMutations";
+import { useDeleteAccount } from "../hooks/mutations/useAccountMutations";
 import {
   deleteAccountSchema,
   type DeleteAccountValues,
@@ -25,7 +25,7 @@ export function DeleteAccountForm() {
   });
   const submit = async (values: DeleteAccountValues) => {
     try {
-      await deleteAccount(values.currentPassword);
+      await deleteAccount({ currentPassword: values.currentPassword });
       clearAuth();
       toast.success("Your account has been deleted.");
       navigate(paths.signUp, { replace: true });
