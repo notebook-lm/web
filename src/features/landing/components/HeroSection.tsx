@@ -14,7 +14,7 @@ export function HeroSection() {
           <Sparkles size={15} />
           Research, reimagined
         </p>
-        <h1 className="text-[clamp(48px,5.5vw,72px)] font-semibold leading-[1.02] tracking-[-.065em]">
+        <h1 className="text-[clamp(48px,5.5vw,72px)] font-semibold leading-[1.1] tracking-[-.045em]">
           Think with your sources,
           <br />
           <em className="font-serif font-medium text-violet">
