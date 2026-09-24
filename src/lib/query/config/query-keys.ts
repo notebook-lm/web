@@ -1,7 +1,10 @@
+import type { ListProjectsParams } from "@/features/projects/api";
+
 export const queryKeys = {
   projects: {
     all: ["projects"] as const,
-    list: () => [...queryKeys.projects.all, "list"] as const,
+    list: (params: ListProjectsParams = {}) =>
+      [...queryKeys.projects.all, "list", params] as const,
     detail: (projectId: string) =>
       [...queryKeys.projects.all, "detail", projectId] as const,
   },
