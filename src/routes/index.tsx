@@ -7,6 +7,7 @@ import {
   ProfilePage,
   UpdateProfileForm,
 } from "@/features/account";
+import { ProjectEditorPage } from "@/features/projects";
 import { permissions } from "@/features/authentication";
 import { RouteLoading } from "@/shared/components";
 import { AuthGuard } from "./guards/AuthGuard";
@@ -53,7 +54,12 @@ export function AppRouter() {
         </Route>
         <Route element={<AuthGuard />}>
           <Route element={<AppLayout />}>
-            <Route path={paths.workspace} element={<WorkspacePage />} />
+            <Route element={<PermissionGuard required={[permissions[5]]} />}>
+              <Route path={paths.workspace} element={<WorkspacePage />} />
+            </Route>
+            <Route element={<PermissionGuard required={[permissions[6]]} />}>
+              <Route path={paths.newProject} element={<ProjectEditorPage />} />
+            </Route>
             <Route element={<AccountSettingsLayout />}>
               <Route element={<PermissionGuard required={[permissions[0]]} />}>
                 <Route path={paths.profile} element={<ProfilePage />} />
@@ -80,6 +86,9 @@ export function AppRouter() {
                 />
               </Route>
             </Route>
+          </Route>
+          <Route element={<PermissionGuard required={[permissions[5]]} />}>
+            <Route path={paths.project} element={<ProjectEditorPage />} />
           </Route>
         </Route>
         <Route
