@@ -55,6 +55,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
       if (
         apiError.status === 401 &&
         retryAfterRefresh &&
+        !path.endsWith("/auth/login") &&
         !path.endsWith("/auth/refresh") &&
         options.refreshAccessToken
       ) {

@@ -34,7 +34,7 @@ export function SignInForm() {
         { replace: true },
       );
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      // The shared HTTP client displays the API error message.
     }
   };
   return (

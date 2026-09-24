@@ -21,6 +21,7 @@ const field =
 export function SignUpForm() {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
   const { mutateAsync: signUp } = useSignUp();
   const {
     register,
@@ -48,7 +49,7 @@ export function SignUpForm() {
       toast.success("Account created. Please sign in.");
       navigate(paths.signIn, { replace: true });
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      // The shared HTTP client displays the API error message.
     }
   };
   return (
@@ -119,10 +120,19 @@ export function SignUpForm() {
             <LockKeyhole size={17} />
             <input
               className="min-w-0 flex-1 outline-none"
-              type={visible ? "text" : "password"}
+              type={confirmVisible ? "text" : "password"}
               autoComplete="new-password"
               {...register("confirmPassword")}
             />
+            <button
+              type="button"
+              aria-label={
+                confirmVisible ? "Hide confirmation password" : "Show confirmation password"
+              }
+              onClick={() => setConfirmVisible((value) => !value)}
+            >
+              {confirmVisible ? <EyeOff size={17} /> : <Eye size={17} />}
+            </button>
           </div>
           {errors.confirmPassword && (
             <p className="text-[#b64034]">{errors.confirmPassword.message}</p>
