@@ -8,10 +8,14 @@ export { AccountMenu } from "./components/AccountMenu";
 
 export { useAuthSession } from "./hooks/useAuthSession";
 
-export { useCurrentUser } from "./hooks/useCurrentUser";
+export { useCurrentUser } from "./hooks/queries/useCurrentUser";
 
-export { useSignIn, useSignOut, useSignUp } from "./hooks/useAuthMutations";
+export {
+  useSignIn,
+  useSignOut,
+  useSignUp,
+} from "./hooks/mutations/useAuthMutations";
 
-export { hasPermissions, permissions } from "./permissions";
+export { hasPermissions, permissions } from "./authorization/permissions";
 
-export type { Permission } from "./permissions";
+export type { Permission } from "./authorization/permissions";

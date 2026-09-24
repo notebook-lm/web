@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { resolvePermissions } from "../permissions";
+import { resolvePermissions } from "../authorization/permissions";
 import { useAuthSessionStore } from "../stores/auth-session.store";
-import { useCurrentUser } from "./useCurrentUser";
+import { useCurrentUser } from "./queries/useCurrentUser";
 
 export function useAuthSession() {
   const hasSession = useAuthSessionStore((state) => state.hasSession);

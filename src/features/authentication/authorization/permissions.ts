@@ -1,4 +1,4 @@
-import type { User } from "@/shared/types/account";
+import type { User } from "../model";
 
 export const permissions = [
   "user:self:read",

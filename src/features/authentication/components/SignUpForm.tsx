@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useSignUp } from "@/features/authentication";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import { signUpSchema, type SignUpValues } from "@/shared/utils/validators";
 
 const field =

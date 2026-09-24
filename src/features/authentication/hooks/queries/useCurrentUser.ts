@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { queryKeys } from "@/lib/query-keys";
-import { accountService } from "@/lib/services/account.service";
+import { accountRepository } from "@/features/account/api";
+import { queryKeys } from "@/lib/query";
 
 export function useCurrentUser(enabled: boolean) {
   return useQuery({
     queryKey: queryKeys.account.currentUser(),
-    queryFn: accountService.getCurrentUser,
+    queryFn: accountRepository.getCurrentUser,
     enabled,
     staleTime: 5 * 60_000,
   });

@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/lib/query-keys";
-import { configureHttpSession } from "@/lib/http-client";
-import { authService } from "@/lib/services/auth.service";
-import { clearSession, getSession, saveSession } from "../session.storage";
-import { useCurrentUser } from "./useCurrentUser";
+import { authRepository } from "../api";
+import { configureHttpSession } from "@/lib/api";
+import { queryKeys } from "@/lib/query";
+import { clearSession, getSession, saveSession } from "../storage/session.storage";
 import { useAuthSessionStore } from "../stores/auth-session.store";
+import { useCurrentUser } from "./queries/useCurrentUser";
 
 export function useSessionBootstrap() {
   const queryClient = useQueryClient();
@@ -20,7 +20,10 @@ export function useSessionBootstrap() {
         const session = getSession();
         if (!session) throw new Error("No refresh session");
 
-        const nextSession = await authService.refresh(session.refreshToken);
+        const response = await authRepository.refresh({
+          refreshToken: session.refreshToken,
+        });
+        const nextSession = response;
         saveSession(nextSession);
         useAuthSessionStore.getState().setSession(nextSession);
         queryClient.setQueryData(

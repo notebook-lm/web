@@ -1,15 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/lib/query-keys";
-import { authService } from "@/lib/services/auth.service";
-import { getSession } from "../session.storage";
-import { useAuthSessionStore } from "../stores/auth-session.store";
+import { authRepository } from "../../api";
+import { queryKeys } from "@/lib/query";
+import { getSession } from "../../storage/session.storage";
+import { useAuthSessionStore } from "../../stores/auth-session.store";
 
 export function useSignIn() {
   const queryClient = useQueryClient();
   const setSession = useAuthSessionStore((state) => state.setSession);
   return useMutation({
-    mutationFn: authService.login,
-    onSuccess: (session) => {
+    mutationFn: authRepository.login,
+    onSuccess: (response) => {
+      const session = response;
       setSession(session);
       queryClient.setQueryData(queryKeys.account.currentUser(), session.user);
     },
@@ -17,7 +18,7 @@ export function useSignIn() {
 }
 
 export function useSignUp() {
-  return useMutation({ mutationFn: authService.register });
+  return useMutation({ mutationFn: authRepository.register });
 }
 
 export function useSignOut() {
@@ -26,7 +27,7 @@ export function useSignOut() {
   return useMutation({
     mutationFn: async () => {
       const refreshToken = getSession()?.refreshToken;
-      if (refreshToken) await authService.logout(refreshToken);
+      if (refreshToken) await authRepository.logout({ refreshToken });
     },
     onSettled: () => {
       clearAuth();

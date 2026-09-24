@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import { signInSchema, type SignInValues } from "@/shared/utils/validators";
 import { useSignIn } from "@/features/authentication";
 

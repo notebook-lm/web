@@ -2,7 +2,7 @@ import { ChevronDown, LogOut, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { paths } from "@/routes/paths";
+import { paths } from "@/routes/config/paths";
 import { useAuthSession, useSignOut } from "@/features/authentication";
 
 export function AccountMenu() {

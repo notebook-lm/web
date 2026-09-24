@@ -1,12 +1,12 @@
 "use client";
 
 import { create } from "zustand";
-import type { AuthResponse } from "@/shared/types/authentication";
-import { clearSession, getSession, saveSession } from "../session.storage";
+import type { AuthSession } from "../model";
+import { clearSession, getSession, saveSession } from "../storage/session.storage";
 
 interface AuthSessionState {
   hasSession: boolean;
-  setSession: (session: AuthResponse) => void;
+  setSession: (session: AuthSession) => void;
   reset: () => void;
 }
 
