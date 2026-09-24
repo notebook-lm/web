@@ -8,6 +8,9 @@ export const endpoints = {
   projects: {
     collection: "/api/v1/projects",
     byId: (projectId: string) => `/api/v1/projects/${projectId}`,
+    documents: (projectId: string) => `/api/v1/projects/${projectId}/documents`,
+    documentById: (projectId: string, documentId: string) =>
+      `/api/v1/projects/${projectId}/documents/${documentId}`,
   },
   account: {
     currentUser: "/api/v1/users/me",

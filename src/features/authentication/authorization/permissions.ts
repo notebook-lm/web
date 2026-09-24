@@ -10,6 +10,10 @@ export const permissions = [
   "project:create",
   "project:update",
   "project:delete",
+  "document:read",
+  "document:create",
+  "document:update",
+  "document:delete",
 ] as const;
 
 export type Permission = (typeof permissions)[number];
