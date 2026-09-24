@@ -16,5 +16,24 @@ export interface UpdateProjectRequest {
   description?: string;
 }
 
-export type ListProjectsResponse = ProjectResponse[];
+export interface ListProjectsParams {
+  q?: string;
+  createdFrom?: string;
+  createdTo?: string;
+  sortBy?: string;
+  direction?: "asc" | "desc";
+  page?: number;
+  size?: number;
+}
+
+export interface ProjectPageResponse {
+  items: ProjectResponse[];
+  page: number;
+  size: number;
+  totalItems: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
 export type DeleteProjectResponse = void;

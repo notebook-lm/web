@@ -2,14 +2,30 @@ import { endpoints, httpClient } from "@/lib/api";
 import type {
   CreateProjectRequest,
   DeleteProjectResponse,
-  ListProjectsResponse,
+  ListProjectsParams,
+  ProjectPageResponse,
   ProjectResponse,
   UpdateProjectRequest,
 } from "./project.dto";
 
+function buildListProjectsPath(params?: ListProjectsParams) {
+  if (!params) return endpoints.projects.collection;
+
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined) searchParams.set(key, String(value));
+  });
+
+  const query = searchParams.toString();
+  return query
+    ? `${endpoints.projects.collection}?${query}`
+    : endpoints.projects.collection;
+}
+
 export const projectApi = {
-  list: () =>
-    httpClient.get<ListProjectsResponse>(endpoints.projects.collection),
+  list: (params?: ListProjectsParams) =>
+    httpClient.get<ProjectPageResponse>(buildListProjectsPath(params)),
   create: (payload: CreateProjectRequest) =>
     httpClient.post<ProjectResponse>(endpoints.projects.collection, payload),
   get: (projectId: string) =>
