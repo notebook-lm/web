@@ -1,3 +1,4 @@
+import axios, { type AxiosInstance, type Method } from "axios";
 import type { ApiErrorResponse } from "@/shared/types/api-error";
 
 export interface ApiClient {
@@ -33,55 +34,47 @@ export class ApiRequestError extends Error {
 }
 
 export function createApiClient(options: ApiClientOptions): ApiClient {
+  const client = createAxiosClient(options);
+
   const request = async <T>(
-    method: string,
+    method: Method,
     path: string,
     { body, retryAfterRefresh = true }: RequestOptions = {},
   ): Promise<T> => {
-    const accessToken = options.getAccessToken?.();
-    const response = await fetch(`${options.baseUrl}${path}`, {
-      method,
-      headers: {
-        Accept: "application/json",
-        ...(body === undefined ? {} : { "Content-Type": "application/json" }),
-        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      },
-      body: body === undefined ? undefined : JSON.stringify(body),
-    });
+    try {
+      const response = await client.request<T>({
+        method,
+        url: path,
+        data: body,
+      });
 
-    if (
-      response.status === 401 &&
-      retryAfterRefresh &&
-      !path.endsWith("/auth/refresh") &&
-      options.refreshAccessToken
-    ) {
-      try {
-        await options.refreshAccessToken();
-        return request<T>(method, path, { body, retryAfterRefresh: false });
-      } catch (error) {
-        options.onRefreshFailure?.();
-        throw error;
+      return response.data;
+    } catch (error) {
+      const apiError = toApiRequestError(error);
+
+      if (
+        apiError.status === 401 &&
+        retryAfterRefresh &&
+        !path.endsWith("/auth/refresh") &&
+        options.refreshAccessToken
+      ) {
+        try {
+          await options.refreshAccessToken();
+          return request<T>(method, path, { body, retryAfterRefresh: false });
+        } catch (refreshError) {
+          options.onRefreshFailure?.();
+          throw refreshError;
+        }
       }
-    }
 
-    if (!response.ok) {
-      const details = await readError(response);
-      const error = new ApiRequestError(response.status, details);
-      options.onError?.(error);
-      throw error;
+      options.onError?.(apiError);
+      throw apiError;
     }
-
-    if (response.status === 204) {
-      return undefined as T;
-    }
-
-    return (await response.json()) as T;
   };
 
   return {
     get: <T>(path: string) => request<T>("GET", path),
-    post: <T>(path: string, body?: unknown) =>
-      request<T>("POST", path, { body }),
+    post: <T>(path: string, body?: unknown) => request<T>("POST", path, { body }),
     patch: <T>(path: string, body?: unknown) =>
       request<T>("PATCH", path, { body }),
     delete: <T>(path: string, body?: unknown) =>
@@ -89,12 +82,29 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
   };
 }
 
-async function readError(
-  response: Response,
-): Promise<ApiErrorResponse | undefined> {
-  try {
-    return (await response.json()) as ApiErrorResponse;
-  } catch {
-    return undefined;
+function createAxiosClient(options: ApiClientOptions): AxiosInstance {
+  const client = axios.create({
+    baseURL: options.baseUrl,
+    headers: { Accept: "application/json" },
+  });
+
+  client.interceptors.request.use((config) => {
+    const accessToken = options.getAccessToken?.();
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return config;
+  });
+
+  return client;
+}
+
+function toApiRequestError(error: unknown): ApiRequestError {
+  if (!axios.isAxiosError<ApiErrorResponse>(error)) {
+    return new ApiRequestError(0, { message: "Network request failed." });
   }
+
+  return new ApiRequestError(error.response?.status ?? 0, error.response?.data);
 }
