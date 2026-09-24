@@ -39,7 +39,7 @@ export function WorkspacePage() {
         <Link
           id="create-project"
           to="/app/projects/new"
-          className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-violet px-5 text-sm font-bold text-white shadow-[0_12px_24px_-16px_#176b62] transition hover:-translate-y-0.5 hover:bg-violet-deep"
+          className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-violet px-5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-violet-deep"
         >
           <Plus size={18} /> New project
         </Link>
@@ -65,7 +65,7 @@ export function WorkspacePage() {
         </div>
       )}
       {isError && (
-        <div className="mt-5 rounded-2xl bg-white p-8 text-sm text-muted shadow-[0_18px_40px_-30px_rgba(27,44,40,.38)]">
+        <div className="mt-5 rounded-2xl border border-black/5 bg-white p-8 text-sm text-muted">
           We couldn’t load your projects right now. Refresh the page to try
           again.
         </div>
@@ -73,7 +73,7 @@ export function WorkspacePage() {
       {!isLoading && !isError && !projects?.length && (
         <div className="mt-5 grid min-h-75 place-items-center rounded-2xl border border-dashed border-[#c8dad3] bg-[#f2f8f5] p-8 text-center">
           <div>
-            <span className="mx-auto grid size-13 place-items-center rounded-2xl bg-white text-violet shadow-sm">
+            <span className="mx-auto grid size-13 place-items-center rounded-2xl border border-black/5 bg-white text-violet">
               <FolderKanban size={25} />
             </span>
             <h2 className="mt-5 font-serif text-2xl font-semibold">
@@ -98,7 +98,7 @@ export function WorkspacePage() {
             <Link
               key={project.id}
               to={`/app/projects/${project.id}`}
-              className="group relative min-h-48 rounded-2xl bg-white p-6 shadow-[0_18px_40px_-30px_rgba(27,44,40,.38)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_22px_42px_-26px_rgba(23,107,98,.25)]"
+              className="group relative min-h-48 rounded-2xl border border-black/5 bg-white p-6 transition duration-200 hover:-translate-y-1 hover:border-[var(--color-border-default)]"
             >
               <span className="grid size-10 place-items-center rounded-xl bg-[#e7f2ee] text-violet">
                 <FolderKanban size={19} />

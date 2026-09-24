@@ -76,7 +76,7 @@ export function ProjectEditorPage() {
             aria-labelledby="project-details-title"
             className="fixed inset-0 z-50 grid place-items-center bg-black/30 p-4"
           >
-            <section className="max-h-[90svh] w-full max-w-xl overflow-auto rounded-[var(--radius-xs)] bg-[var(--color-bg-surface)] p-6 shadow-xl">
+            <section className="max-h-[90svh] w-full max-w-xl overflow-auto rounded-[var(--radius-xs)] border border-black/5 bg-[var(--color-bg-surface)] p-6 shadow-sm">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold text-[var(--color-text-action)]">
@@ -134,7 +134,7 @@ export function ProjectEditorPage() {
         }
         description="Give your research space a focused name and a clear starting point."
       />
-      <div className="mt-8 rounded-[var(--radius-xs)] bg-[var(--color-bg-surface)] p-5 shadow-sm sm:p-8">
+      <div className="mt-8 rounded-[var(--radius-xs)] border border-black/5 bg-[var(--color-bg-surface)] p-5 sm:p-8">
         <div className="flex items-center gap-3">
           <span className="grid size-11 place-items-center rounded-full bg-[var(--color-bg-selected)] text-[var(--color-text-action)]">
             <Plus size={21} />
