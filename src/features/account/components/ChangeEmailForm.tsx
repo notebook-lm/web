@@ -1,15 +1,15 @@
-import { Mail, ShieldCheck } from "lucide-react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRight, Mail, ShieldCheck } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { paths } from "@/routes/config/paths";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
-import { useChangeEmail } from "../hooks/mutations/useAccountMutations";
+import { paths } from "@/routes/config/paths";
 import {
   changeEmailSchema,
   type ChangeEmailValues,
 } from "@/shared/utils/validators";
+import { useChangeEmail } from "../hooks/mutations/useAccountMutations";
 
 export function ChangeEmailForm() {
   const { mutateAsync: changeEmail } = useChangeEmail();
@@ -23,7 +23,9 @@ export function ChangeEmailForm() {
     resolver: zodResolver(changeEmailSchema),
     defaultValues: { email: user?.email ?? "", currentPassword: "" },
   });
+
   if (!user) return null;
+
   const submit = async (values: ChangeEmailValues) => {
     try {
       await changeEmail(values);
@@ -34,56 +36,91 @@ export function ChangeEmailForm() {
       toast.error("Something went wrong. Please try again.");
     }
   };
+
   return (
-    <div className="min-h-[430px] max-w-[720px] rounded-[15px] bg-white p-5 sm:p-[34px]">
-      <header className="flex items-start gap-3 [&>div>p]:mb-1 [&>div>p]:text-[11px] [&>div>p]:font-extrabold [&>div>p]:uppercase [&>div>p]:tracking-[.08em] [&>div>p]:text-violet [&>div>h1]:m-0 [&>div>h1]:text-[clamp(26px,3vw,34px)] [&>div>h1]:font-semibold [&>div>h1]:leading-[1.1] [&>div>span]:mt-2 [&>div>span]:block [&>div>span]:text-[13px] [&>div>span]:leading-relaxed [&>div>span]:text-muted">
-        <span className="grid size-10 shrink-0 place-items-center rounded-[10px] bg-[#eaf5f1] text-violet">
-          <Mail size={20} />
-        </span>
-        <div>
-          <p>Email</p>
-          <h1>Change email address</h1>
-          <span>Your current address is {user.email}.</span>
-        </div>
+    <div className="max-w-3xl">
+      <header className="mb-8 max-w-2xl">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-violet">
+          Account settings
+        </p>
+        <h1 className="mt-2 font-serif text-4xl font-semibold tracking-tight sm:text-5xl">
+          Change email address
+        </h1>
+        <p className="mt-3 text-sm leading-6 text-muted sm:text-base">
+          Update the email you use to sign in to your workspace.
+        </p>
       </header>
-      <div className="mt-7 flex items-start gap-3 rounded-lg bg-[#effaf7] p-3 text-xs leading-relaxed text-violet">
-        <ShieldCheck size={18} />
-        <span>
-          For your security, changing your email signs you out on every device.
-        </span>
-      </div>
-      <form
-        className="mt-7 grid max-w-[480px] gap-3 [&>label]:text-xs [&>label]:font-bold [&>label]:text-[#485752] [&>input]:min-h-11 [&>input]:rounded-lg [&>input]:bg-[#f7f9f7] [&>input]:px-3 [&>input]:text-sm [&>input]:outline-none"
-        onSubmit={handleSubmit(submit)}
-      >
-        <label htmlFor="account-email">New email address</label>
-        <input
-          id="account-email"
-          type="email"
-          autoFocus
-          {...register("email")}
-        />
-        <label htmlFor="email-password">Current password</label>
-        <input
-          id="email-password"
-          type="password"
-          autoComplete="current-password"
-          {...register("currentPassword")}
-        />
-        {errors.currentPassword && (
-          <p className="text-xs text-[#b64034]">
-            {errors.currentPassword.message}
-          </p>
-        )}
-        <div className="mt-4 flex items-center gap-3">
-          <button
-            className="inline-flex min-h-[42px] items-center justify-center rounded-lg bg-violet px-4 text-sm font-bold text-white hover:bg-violet-deep disabled:opacity-70"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Updating…" : "Update email"}
-          </button>
+
+      <section className="overflow-hidden rounded-3xl border border-black/5 bg-white">
+        <div className="flex items-start gap-4 border-b border-[#e7eeeb] bg-[#eaf5f1] px-6 py-6 sm:px-9">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white text-violet">
+            <Mail size={20} />
+          </span>
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold">Sign-in email</h2>
+            <p className="mt-1 truncate text-sm text-muted">
+              Current: {user.email}
+            </p>
+          </div>
         </div>
-      </form>
+
+        <div className="max-w-2xl p-6 sm:p-9">
+          <div className="flex gap-3 rounded-xl border border-[#d7e9e3] bg-[#eff8f5] p-3 text-xs leading-5 text-[#47655c]">
+            <ShieldCheck size={17} className="mt-0.5 shrink-0 text-violet" />
+            Changing your email signs you out on every device.
+          </div>
+
+          <form className="mt-7 grid gap-5" onSubmit={handleSubmit(submit)}>
+            <div className="grid gap-2">
+              <label
+                className="text-xs font-bold text-[#485752]"
+                htmlFor="account-email"
+              >
+                New email address
+              </label>
+              <input
+                id="account-email"
+                className="min-h-12 rounded-xl border border-[#e1e9e5] bg-[#f8faf8] px-4 text-sm outline-none transition focus:border-[#b9d8ce] focus:bg-white"
+                type="email"
+                autoFocus
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-xs text-[#b64034]">{errors.email.message}</p>
+              )}
+            </div>
+            <div className="grid gap-2">
+              <label
+                className="text-xs font-bold text-[#485752]"
+                htmlFor="email-password"
+              >
+                Current password
+              </label>
+              <input
+                id="email-password"
+                className="min-h-12 rounded-xl border border-[#e1e9e5] bg-[#f8faf8] px-4 text-sm outline-none transition focus:border-[#b9d8ce] focus:bg-white"
+                type="password"
+                autoComplete="current-password"
+                {...register("currentPassword")}
+              />
+              {errors.currentPassword && (
+                <p className="text-xs text-[#b64034]">
+                  {errors.currentPassword.message}
+                </p>
+              )}
+            </div>
+            <div className="flex pt-1">
+              <button
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-violet px-4 text-sm font-bold text-white transition hover:bg-violet-deep disabled:opacity-70"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Updating…" : "Update email"}
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
     </div>
   );
 }

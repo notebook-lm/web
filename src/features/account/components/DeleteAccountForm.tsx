@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, ShieldAlert } from "lucide-react";
+import { AlertTriangle, Check, ShieldAlert, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -66,7 +66,7 @@ export function DeleteAccountForm() {
         </div>
       </div>
       <form
-        className="mt-7 grid max-w-[480px] gap-3 [&>label]:text-xs [&>label]:font-bold [&>label]:text-[#485752] [&>input]:min-h-11 [&>input]:rounded-lg [&>input]:bg-[#f7f9f7] [&>input]:px-3 [&>input]:text-sm [&>input]:outline-none"
+        className="mt-7 grid w-full gap-3 [&>label]:text-xs [&>label]:font-bold [&>label]:text-[#485752] [&>input]:min-h-11 [&>input]:rounded-lg [&>input]:bg-[#f7f9f7] [&>input]:px-3 [&>input]:text-sm [&>input]:outline-none"
         onSubmit={handleSubmit(submit)}
       >
         <label htmlFor="delete-account-password">
@@ -84,12 +84,13 @@ export function DeleteAccountForm() {
             {errors.currentPassword.message}
           </p>
         )}
-        <div className="mt-4 flex items-center gap-3">
+        <div className="mt-4 flex">
           <button
-            className="inline-flex min-h-[42px] items-center justify-center rounded-lg bg-[#b64034] px-4 text-sm font-bold text-white hover:bg-[#913026] disabled:opacity-70"
+            className="inline-flex min-h-[42px] w-full items-center justify-center gap-2 rounded-lg bg-[#b64034] px-4 text-sm font-bold text-white hover:bg-[#913026] disabled:opacity-70"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Deleting…" : "Delete account"}
+            <Trash2 size={16} />
           </button>
         </div>
       </form>

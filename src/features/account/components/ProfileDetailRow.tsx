@@ -5,38 +5,33 @@ interface ProfileDetailRowProps {
   icon: ReactNode;
   label: string;
   children: ReactNode;
-  highlighted?: boolean;
+  mono?: boolean;
 }
 
 export function ProfileDetailRow({
   icon,
   label,
   children,
-  highlighted = false,
+  mono = false,
 }: ProfileDetailRowProps) {
   return (
-    <div
-      className={cn(
-        "flex items-center gap-3 rounded-[9px] px-[13px] py-3.5",
-        highlighted && "bg-white py-4",
-      )}
-    >
-      <span
-        className={cn(
-          "grid shrink-0 place-items-center",
-          highlighted
-            ? "size-[42px] rounded-xl bg-[linear-gradient(145deg,#e98766,#c75f55)] text-base font-extrabold text-white"
-            : "size-[34px] rounded-[9px] bg-[#e8f4f0] text-violet",
-        )}
-      >
+    <div className="flex min-w-0 items-center gap-3 px-4 py-3.5 sm:px-5">
+      <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#eaf5f1] text-violet">
         {icon}
       </span>
-      <span className="grid min-w-0 gap-1">
-        <small className="text-[10px] font-extrabold uppercase tracking-[.06em] text-[#81908a]">
+      <div className="min-w-0 flex-1">
+        <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#74827c]">
           {label}
-        </small>
-        {children}
-      </span>
+        </dt>
+        <dd
+          className={cn(
+            "mt-0.5 truncate text-sm font-semibold text-ink",
+            mono && "font-mono text-xs font-medium text-muted",
+          )}
+        >
+          {children}
+        </dd>
+      </div>
     </div>
   );
 }

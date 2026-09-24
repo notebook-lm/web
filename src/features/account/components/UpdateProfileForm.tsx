@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, UserRound } from "lucide-react";
+import { ArrowLeft, Check, UserRound } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -55,7 +55,7 @@ export function UpdateProfileForm() {
           <h1 className="text-3xl font-semibold">Edit personal information</h1>
         </div>
       </header>
-      <form className="mt-8 max-w-[480px]" onSubmit={handleSubmit(submit)}>
+      <form className="mt-8 w-full" onSubmit={handleSubmit(submit)}>
         <label htmlFor="profile-display-name">Display name</label>
         <input
           className="mt-2 min-h-11 w-full rounded-lg bg-[#f4f7f4] px-3 text-sm outline-none"
@@ -72,15 +72,16 @@ export function UpdateProfileForm() {
             Use the name you want collaborators to recognize.
           </p>
         )}
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 grid grid-cols-2 gap-3">
           <button
-            className="rounded-lg bg-violet px-4 py-3 text-sm font-bold text-white disabled:opacity-70"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-violet px-4 text-sm font-bold text-white disabled:opacity-70"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Saving…" : "Save changes"}
+            <Check size={16} />
           </button>
           <Link
-            className="rounded-lg bg-[#eff8f5] px-4 py-3 text-sm font-bold text-violet"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#eff8f5] px-4 text-sm font-bold text-violet"
             to={paths.profile}
           >
             Cancel
