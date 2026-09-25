@@ -11,6 +11,8 @@ export const endpoints = {
     documents: (projectId: string) => `/api/v1/projects/${projectId}/documents`,
     documentById: (projectId: string, documentId: string) =>
       `/api/v1/projects/${projectId}/documents/${documentId}`,
+    documentContent: (projectId: string, documentId: string) =>
+      `/api/v1/projects/${projectId}/documents/${documentId}/content`,
   },
   account: {
     currentUser: "/api/v1/users/me",

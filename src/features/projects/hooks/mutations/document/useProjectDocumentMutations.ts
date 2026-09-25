@@ -6,7 +6,7 @@ const refresh = (
   projectId: string,
 ) =>
   void queryClient.invalidateQueries({
-    queryKey: queryKeys.projects.documents(projectId),
+    queryKey: queryKeys.projects.documentsAll(projectId),
   });
 export function useUploadProjectDocument() {
   const queryClient = useQueryClient();

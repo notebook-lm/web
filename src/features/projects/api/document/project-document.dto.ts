@@ -8,7 +8,27 @@ export interface ProjectDocumentResponse {
   createdAt: string;
   updatedAt: string;
 }
-export type ListProjectDocumentsResponse = ProjectDocumentResponse[];
+
+export interface ListProjectDocumentsParams {
+  q?: string;
+  createdFrom?: string;
+  createdTo?: string;
+  sortBy?: string;
+  direction?: "asc" | "desc";
+  page?: number;
+  size?: number;
+}
+
+export interface ProjectDocumentPageResponse {
+  items: ProjectDocumentResponse[];
+  page: number;
+  size: number;
+  totalItems: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
 export interface RenameDocumentRequest {
   title: string;
 }

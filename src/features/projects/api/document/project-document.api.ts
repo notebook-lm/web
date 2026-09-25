@@ -1,20 +1,36 @@
 import { endpoints, httpClient } from "@/lib/api";
 import type {
-  ListProjectDocumentsResponse,
+  ListProjectDocumentsParams,
+  ProjectDocumentPageResponse,
   ProjectDocumentResponse,
   RenameDocumentRequest,
 } from "./project-document.dto";
+
+function withQuery<T extends object>(path: string, params?: T) {
+  if (!params) return path;
+
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined) searchParams.set(key, String(value));
+  });
+
+  const query = searchParams.toString();
+  return query ? `${path}?${query}` : path;
+}
+
 export const projectDocumentApi = {
-  list: (projectId: string) =>
-    httpClient.get<ListProjectDocumentsResponse>(
-      endpoints.projects.documents(projectId),
+  list: (projectId: string, params?: ListProjectDocumentsParams) =>
+    httpClient.get<ProjectDocumentPageResponse>(
+      withQuery(endpoints.projects.documents(projectId), params),
     ),
   upload: (projectId: string, file: File, title?: string) => {
     const data = new FormData();
     data.append("file", file);
-    if (title?.trim()) data.append("title", title.trim());
+
     return httpClient.post<ProjectDocumentResponse>(
-      endpoints.projects.documents(projectId),
+      withQuery(endpoints.projects.documents(projectId), {
+        title: title?.trim() || undefined,
+      }),
       data,
     );
   },
