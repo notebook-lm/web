@@ -17,14 +17,16 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
       <div className="grid min-h-0 flex-1 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)_300px]">
         <ProjectSourcesPanel project={project} />
         <main className="flex min-w-0 flex-col px-5 py-10 sm:px-10">
-          <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center">
-            <span className="grid size-12 place-items-center rounded-full bg-[var(--color-bg-selected)] text-[var(--color-text-action)]">
-              <BookOpen size={22} />
-            </span>
-            <h1 className="mt-6 font-serif text-3xl font-semibold leading-tight sm:text-4xl">
-              Start exploring <em>{project.title}.</em>
-            </h1>
-            <p className="mt-4 max-w-xl text-sm leading-6 text-muted">
+          <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center text-center">
+            <div className="flex w-full items-center justify-center gap-4">
+              <span className="grid size-12 shrink-0 place-items-center rounded-full bg-[var(--color-bg-selected)] text-[var(--color-text-action)]">
+                <BookOpen size={22} />
+              </span>
+              <h1 className="line-clamp-2 min-w-0 max-w-xl break-words font-serif text-3xl font-semibold leading-tight sm:text-4xl">
+                Start exploring <em>{project.title}.</em>
+              </h1>
+            </div>
+            <p className="mt-4 line-clamp-3 max-w-xl break-words text-sm leading-6 text-muted">
               {project.description ||
                 "Your project is ready. Add sources when they are available, then use this canvas to guide your research."}
             </p>
