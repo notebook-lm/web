@@ -28,17 +28,6 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
               {project.description ||
                 "Your project is ready. Add sources when they are available, then use this canvas to guide your research."}
             </p>
-            <p className="mt-8 text-sm font-semibold">
-              What would you like this project to help you with?
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <span className="rounded-full bg-[var(--color-bg-surface)] px-4 py-2 text-xs text-muted">
-                Define the research question
-              </span>
-              <span className="rounded-full bg-[var(--color-bg-surface)] px-4 py-2 text-xs text-muted">
-                Outline the next steps
-              </span>
-            </div>
           </div>
           <form
             className="mx-auto mt-8 flex w-full max-w-2xl gap-2 rounded-[var(--radius-xs)] border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-2"
@@ -66,9 +55,6 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
               <Sparkles size={17} />
             </button>
           </form>
-          <p className="mx-auto mt-3 max-w-2xl text-center text-xs text-muted">
-            Project chat will be available when sources are supported.
-          </p>
         </main>
         <ProjectStudioPanel />
       </div>
