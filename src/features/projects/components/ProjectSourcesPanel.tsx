@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+import { DialogModal, useModal } from "react-dialog-confirm";
 import {
   ChevronLeft,
   ChevronRight,
@@ -21,6 +23,7 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<ProjectDocument | null>(null);
   const [page, setPage] = useState(0);
+  const { openModal, closeModal } = useModal();
   const { data, isLoading, isError, isFetching } = useProjectDocuments(project.id, {
     page,
     size: 5,
@@ -67,11 +70,44 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
                 <button
                   aria-label={`Delete ${document.title}`}
                   className="grid size-9 shrink-0 place-items-center rounded-full text-muted hover:bg-[#fff0ee] hover:text-[var(--color-state-error)]"
-                  onClick={() => {
-                    if (window.confirm(`Delete “${document.title}”?`)) {
-                      void remove({ projectId: project.id, documentId: document.id });
-                    }
-                  }}
+                  onClick={() =>
+                    openModal(
+                      <DialogModal
+                        description={`“${document.title}” will be permanently removed from this project.`}
+                        icon="warning"
+                        title="Delete this source?"
+                        customFooter={
+                          <div className="flex justify-end gap-3">
+                            <button
+                              className="min-h-10 rounded-full px-4 text-sm font-semibold text-muted hover:bg-[var(--color-bg-surface-subtle)]"
+                              onClick={closeModal}
+                              type="button"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              className="min-h-10 rounded-full bg-[var(--color-state-error)] px-4 text-sm font-semibold text-white hover:brightness-95"
+                              onClick={async () => {
+                                try {
+                                  await remove({
+                                    projectId: project.id,
+                                    documentId: document.id,
+                                  });
+                                  toast.success("Source deleted.");
+                                  closeModal();
+                                } catch {
+                                  toast.error("We couldn’t delete this source. Please try again.");
+                                }
+                              }}
+                              type="button"
+                            >
+                              Delete source
+                            </button>
+                          </div>
+                        }
+                      />,
+                    )
+                  }
                 >
                   <Trash2 size={15} />
                 </button>
