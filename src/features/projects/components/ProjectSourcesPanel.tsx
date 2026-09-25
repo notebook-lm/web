@@ -1,9 +1,17 @@
-import { FileText, LoaderCircle, Plus, Trash2 } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  LoaderCircle,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { useDeleteProjectDocument, useProjectDocuments } from "../hooks";
 import type { Project, ProjectDocument } from "../model";
 import { ProjectDocumentPreview } from "./ProjectDocumentPreview";
 import { ProjectDocumentUpload } from "./ProjectDocumentUpload";
+
 const formatSize = (bytes: number) =>
   bytes < 1024 * 1024
     ? `${Math.max(1, Math.round(bytes / 1024))} KB`
@@ -12,9 +20,14 @@ const formatSize = (bytes: number) =>
 export function ProjectSourcesPanel({ project }: { project: Project }) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<ProjectDocument | null>(null);
-  const { data, isLoading, isError } = useProjectDocuments(project.id);
+  const [page, setPage] = useState(0);
+  const { data, isLoading, isError, isFetching } = useProjectDocuments(project.id, {
+    page,
+    size: 5,
+  });
   const documents = data?.items ?? [];
   const { mutateAsync: remove } = useDeleteProjectDocument();
+
   return (
     <aside
       aria-label="Sources"
@@ -23,7 +36,7 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold">Sources</h2>
         <span className="text-xs text-muted">
-          {documents.length} {documents.length === 1 ? "source" : "sources"}
+          {data?.totalItems ?? 0} {(data?.totalItems ?? 0) === 1 ? "source" : "sources"}
         </span>
       </div>
       <button
@@ -38,52 +51,43 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
           <LoaderCircle className="animate-spin text-muted" size={22} />
         </div>
       ) : isError ? (
-        <p
-          role="alert"
-          className="mt-6 text-sm text-[var(--color-state-error)]"
-        >
+        <p role="alert" className="mt-6 text-sm text-[var(--color-state-error)]">
           We couldn’t load sources. Refresh and try again.
         </p>
       ) : documents.length ? (
-        <ul className="mt-5 grid gap-2">
-          {documents.map((document) => (
-            <li
-              key={document.id}
-              className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-lg p-2 hover:bg-[var(--color-bg-surface-subtle)]"
-            >
-              <FileText
-                className="shrink-0 text-[var(--color-text-action)]"
-                size={17}
-              />
-              <button
-                className="min-w-0 text-left text-sm font-medium"
-                onClick={() => setSelectedDocument(document)}
-                title={`Preview ${document.title}`}
-                type="button"
-              >
-                <span className="line-clamp-2 break-words">
-                  {document.title}
-                </span>
-                <span className="mt-0.5 block text-xs font-normal text-muted">
-                  {formatSize(document.sizeBytes)}
-                </span>
-              </button>
-              <button
-                aria-label={`Delete ${document.title}`}
-                className="grid size-9 shrink-0 place-items-center rounded-full text-muted hover:bg-[#fff0ee] hover:text-[var(--color-state-error)]"
-                onClick={() => {
-                  if (window.confirm(`Delete “${document.title}”?`))
-                    void remove({
-                      projectId: project.id,
-                      documentId: document.id,
-                    });
-                }}
-              >
-                <Trash2 size={15} />
-              </button>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="mt-5 grid gap-2">
+            {documents.map((document) => (
+              <li key={document.id} className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-lg p-2 hover:bg-[var(--color-bg-surface-subtle)]">
+                <FileText className="shrink-0 text-[var(--color-text-action)]" size={17} />
+                <button className="min-w-0 text-left text-sm font-medium" onClick={() => setSelectedDocument(document)} title={`Preview ${document.title}`} type="button">
+                  <span className="line-clamp-2 break-words">{document.title}</span>
+                  <span className="mt-0.5 block text-xs font-normal text-muted">{formatSize(document.sizeBytes)}</span>
+                </button>
+                <button
+                  aria-label={`Delete ${document.title}`}
+                  className="grid size-9 shrink-0 place-items-center rounded-full text-muted hover:bg-[#fff0ee] hover:text-[var(--color-state-error)]"
+                  onClick={() => {
+                    if (window.confirm(`Delete “${document.title}”?`)) {
+                      void remove({ projectId: project.id, documentId: document.id });
+                    }
+                  }}
+                >
+                  <Trash2 size={15} />
+                </button>
+              </li>
+            ))}
+          </ul>
+          {data && data.totalPages > 1 ? (
+            <nav aria-label="Source pagination" className="mt-4 flex items-center justify-between border-t border-[var(--color-border-default)] pt-3">
+              <span className="text-xs text-muted">{data.page + 1} / {data.totalPages}</span>
+              <div className="flex gap-1">
+                <button aria-label="Previous source page" className="grid size-8 place-items-center rounded-full hover:bg-[var(--color-bg-surface-subtle)] disabled:cursor-not-allowed disabled:opacity-40" disabled={!data.hasPrevious || isFetching} onClick={() => setPage((current) => Math.max(0, current - 1))} type="button"><ChevronLeft size={16} /></button>
+                <button aria-label="Next source page" className="grid size-8 place-items-center rounded-full hover:bg-[var(--color-bg-surface-subtle)] disabled={!data.hasNext || isFetching} disabled:cursor-not-allowed disabled:opacity-40" disabled={!data.hasNext || isFetching} onClick={() => setPage((current) => current + 1)} type="button"><ChevronRight size={16} /></button>
+              </div>
+            </nav>
+          ) : null}
+        </>
       ) : (
         <div className="grid min-h-48 place-items-center py-8 text-center">
           <div>
@@ -100,11 +104,7 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
         onClose={() => setSelectedDocument(null)}
         projectId={project.id}
       />
-      <ProjectDocumentUpload
-        projectId={project.id}
-        open={isUploadOpen}
-        onClose={() => setIsUploadOpen(false)}
-      />
+      <ProjectDocumentUpload projectId={project.id} open={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
     </aside>
   );
 }
