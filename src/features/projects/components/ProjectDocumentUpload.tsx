@@ -8,6 +8,7 @@ interface Props {
   open: boolean;
   onClose: () => void;
 }
+
 const extensions = [
   "pdf",
   "docx",
@@ -23,20 +24,18 @@ const accept = ".pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.md,.txt";
 
 export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [mode, setMode] = useState<"file" | "text">("file");
   const [file, setFile] = useState<File>();
   const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
   const { mutateAsync: upload, isPending } = useUploadProjectDocument();
+
   const close = () => {
     if (!isPending) {
       setFile(undefined);
       setTitle("");
-      setText("");
-      setMode("file");
       onClose();
     }
   };
+
   useEffect(() => {
     const escape = (event: KeyboardEvent) => {
       if (event.key === "Escape") close();
@@ -44,7 +43,9 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
     if (open) window.addEventListener("keydown", escape);
     return () => window.removeEventListener("keydown", escape);
   });
+
   if (!open) return null;
+
   const choose = (candidate?: File) => {
     if (!candidate) return;
     const ext = candidate.name.split(".").pop()?.toLowerCase();
@@ -55,27 +56,18 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
     setFile(candidate);
     if (!title) setTitle(candidate.name.replace(/\.[^.]+$/, ""));
   };
+
   const submit = async () => {
-    const source =
-      mode === "file"
-        ? file
-        : text.trim()
-          ? new File([text], `${title.trim() || "Pasted notes"}.txt`, {
-              type: "text/plain;charset=utf-8",
-            })
-          : undefined;
-    if (!source) {
-      toast.error(
-        mode === "file"
-          ? "Choose a file to upload."
-          : "Enter some text to add as a source.",
-      );
+    if (!file) {
+      toast.error("Choose a file to upload.");
       return;
     }
-    await upload({ projectId, file: source, title: title.trim() || undefined });
+
+    await upload({ projectId, file, title: title.trim() || undefined });
     toast.success("Source added.");
     close();
   };
+
   return (
     <div
       className="fixed inset-0 z-50 grid place-items-center bg-[#15231f]/35 p-4"
@@ -96,7 +88,7 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
               Project sources
             </p>
             <h2 id="add-source-title" className="mt-2 text-xl font-semibold">
-              Add a source
+              Upload a file
             </h2>
           </div>
           <button
@@ -108,24 +100,9 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
             <X size={18} />
           </button>
         </div>
-        <div className="mt-6 grid grid-cols-2 rounded-xl bg-[var(--color-bg-surface-subtle)] p-1">
-          <button
-            className={`min-h-10 rounded-lg text-sm font-semibold ${mode === "file" ? "bg-[var(--color-bg-surface)] text-[var(--color-text-action)] shadow-sm" : "text-muted"}`}
-            onClick={() => setMode("file")}
-            type="button"
-          >
-            Upload file
-          </button>
-          <button
-            className={`min-h-10 rounded-lg text-sm font-semibold ${mode === "text" ? "bg-[var(--color-bg-surface)] text-[var(--color-text-action)] shadow-sm" : "text-muted"}`}
-            onClick={() => setMode("text")}
-            type="button"
-          >
-            Paste text
-          </button>
-        </div>
+
         <label
-          className="mt-5 block text-xs font-semibold text-muted"
+          className="mt-6 block text-xs font-semibold text-muted"
           htmlFor="source-title"
         >
           Source title <span className="font-normal">(optional)</span>
@@ -135,54 +112,41 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
           id="source-title"
           maxLength={255}
           onChange={(event) => setTitle(event.target.value)}
-          placeholder={
-            mode === "file" ? "Use file name" : "e.g. Interview notes"
-          }
+          placeholder="Use file name"
           value={title}
         />
-        {mode === "file" ? (
-          <>
-            <input
-              ref={inputRef}
-              accept={accept}
-              className="sr-only"
-              id="source-file"
-              onChange={(event) => choose(event.target.files?.[0])}
-              type="file"
+
+        <input
+          ref={inputRef}
+          accept={accept}
+          className="sr-only"
+          id="source-file"
+          onChange={(event) => choose(event.target.files?.[0])}
+          type="file"
+        />
+        <button
+          className="mt-4 grid min-h-40 w-full place-items-center rounded-xl border border-dashed border-[var(--color-border-default)] bg-[var(--color-bg-surface-subtle)] p-5 text-center hover:bg-[var(--color-bg-selected)]"
+          onClick={() => inputRef.current?.click()}
+          onDragOver={(event) => event.preventDefault()}
+          onDrop={(event) => {
+            event.preventDefault();
+            choose(event.dataTransfer.files[0]);
+          }}
+          type="button"
+        >
+          <span>
+            <Upload
+              className="mx-auto text-[var(--color-text-action)]"
+              size={22}
             />
-            <button
-              className="mt-4 grid min-h-40 w-full place-items-center rounded-xl border border-dashed border-[var(--color-border-default)] bg-[var(--color-bg-surface-subtle)] p-5 text-center hover:bg-[var(--color-bg-selected)]"
-              onClick={() => inputRef.current?.click()}
-              onDragOver={(event) => event.preventDefault()}
-              onDrop={(event) => {
-                event.preventDefault();
-                choose(event.dataTransfer.files[0]);
-              }}
-              type="button"
-            >
-              <span>
-                <Upload
-                  className="mx-auto text-[var(--color-text-action)]"
-                  size={22}
-                />
-                <span className="mt-3 block text-sm font-semibold">
-                  {file ? file.name : "Drop a file here or browse"}
-                </span>
-                <span className="mt-1 block text-xs text-muted">
-                  PDF, Office, Markdown, or text files
-                </span>
-              </span>
-            </button>
-          </>
-        ) : (
-          <textarea
-            className="mt-4 min-h-40 w-full resize-y rounded-xl bg-[var(--color-bg-surface-subtle)] p-3 text-sm outline-none"
-            id="source-text"
-            onChange={(event) => setText(event.target.value)}
-            placeholder="Paste notes, an article excerpt, or any text you want to reference."
-            value={text}
-          />
-        )}
+            <span className="mt-3 block text-sm font-semibold">
+              {file ? file.name : "Drop a file here or browse"}
+            </span>
+            <span className="mt-1 block text-xs text-muted">
+              PDF, Office, Markdown, or text files
+            </span>
+          </span>
+        </button>
         <div className="mt-6 flex justify-end gap-3">
           <button
             className="min-h-11 rounded-full px-4 text-sm font-semibold text-muted hover:bg-[var(--color-bg-surface-subtle)]"

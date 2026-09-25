@@ -1,3 +1,4 @@
+import { endpoints } from "@/lib/api";
 import { FileText, LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useDeleteProjectDocument, useProjectDocuments } from "../hooks";
@@ -10,16 +11,13 @@ const formatSize = (bytes: number) =>
 
 export function ProjectSourcesPanel({ project }: { project: Project }) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const {
-    data: documents = [],
-    isLoading,
-    isError,
-  } = useProjectDocuments(project.id);
+  const { data, isLoading, isError } = useProjectDocuments(project.id);
+  const documents = data?.items ?? [];
   const { mutateAsync: remove } = useDeleteProjectDocument();
   return (
     <aside
       aria-label="Sources"
-      className="border-b border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-4 lg:border-r lg:border-b-0"
+      className="min-w-0 overflow-hidden border-b border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-4 lg:border-r lg:border-b-0"
     >
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold">Sources</h2>
@@ -50,27 +48,29 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
           {documents.map((document) => (
             <li
               key={document.id}
-              className="group flex items-center gap-2 rounded-lg p-2 hover:bg-[var(--color-bg-surface-subtle)]"
+              className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-lg p-2 hover:bg-[var(--color-bg-surface-subtle)]"
             >
               <FileText
                 className="shrink-0 text-[var(--color-text-action)]"
                 size={17}
               />
               <a
-                className="min-w-0 flex-1 truncate text-sm font-medium"
-                href={`http://localhost:8080/api/v1/projects/${project.id}/documents/${document.id}/content`}
+                className="min-w-0 text-sm font-medium"
+                href={`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"}${endpoints.projects.documentContent(project.id, document.id)}`}
                 target="_blank"
                 rel="noreferrer"
                 title={document.title}
               >
-                {document.title}
-                <span className="block text-xs font-normal text-muted">
+                <span className="line-clamp-2 break-words">
+                  {document.title}
+                </span>
+                <span className="mt-0.5 block text-xs font-normal text-muted">
                   {formatSize(document.sizeBytes)}
                 </span>
               </a>
               <button
                 aria-label={`Delete ${document.title}`}
-                className="grid size-9 place-items-center rounded-full text-muted hover:bg-[#fff0ee] hover:text-[var(--color-state-error)]"
+                className="grid size-9 shrink-0 place-items-center rounded-full text-muted hover:bg-[#fff0ee] hover:text-[var(--color-state-error)]"
                 onClick={() => {
                   if (window.confirm(`Delete “${document.title}”?`))
                     void remove({
