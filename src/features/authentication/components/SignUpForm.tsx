@@ -13,6 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useSignUp } from "@/features/authentication";
 import { paths } from "@/routes/config/paths";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import { signUpSchema, type SignUpValues } from "@/shared/utils/validators";
 
 const field =
@@ -26,6 +27,7 @@ export function SignUpForm() {
   const {
     register,
     handleSubmit,
+    setError,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<SignUpValues>({
@@ -48,8 +50,9 @@ export function SignUpForm() {
       reset();
       toast.success("Account created. Please sign in.");
       navigate(paths.signIn, { replace: true });
-    } catch {
-      // The shared HTTP client displays the API error message.
+    } catch (error) {
+      if (setApiFieldErrors(error, ["displayName", "email", "password", "confirmPassword"] as const, setError)) return;
+      toast.error(getErrorMessage(error, "We couldn't create your account. Please try again."));
     }
   };
   return (
@@ -65,7 +68,7 @@ export function SignUpForm() {
       <form onSubmit={handleSubmit(submit)} noValidate className="grid gap-4">
         <label className="grid gap-2 text-xs font-bold text-[#485752]">
           Display name
-          <div className={field}>
+          <div className={`${field} ${errors.displayName ? "border border-[#b64034]" : ""}`}>
             <UserRound size={17} />
             <input
               className="min-w-0 flex-1 outline-none"
@@ -79,7 +82,7 @@ export function SignUpForm() {
         </label>
         <label className="grid gap-2 text-xs font-bold text-[#485752]">
           Email address
-          <div className={field}>
+          <div className={`${field} ${errors.email ? "border border-[#b64034]" : ""}`}>
             <Mail size={17} />
             <input
               className="min-w-0 flex-1 outline-none"
@@ -94,7 +97,7 @@ export function SignUpForm() {
         </label>
         <label className="grid gap-2 text-xs font-bold text-[#485752]">
           Password
-          <div className={field}>
+          <div className={`${field} ${errors.password ? "border border-[#b64034]" : ""}`}>
             <LockKeyhole size={17} />
             <input
               className="min-w-0 flex-1 outline-none"
@@ -116,7 +119,7 @@ export function SignUpForm() {
         </label>
         <label className="grid gap-2 text-xs font-bold text-[#485752]">
           Confirm password
-          <div className={field}>
+          <div className={`${field} ${errors.confirmPassword ? "border border-[#b64034]" : ""}`}>
             <LockKeyhole size={17} />
             <input
               className="min-w-0 flex-1 outline-none"

@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { DialogModal, useModal } from "react-dialog-confirm";
+import { getErrorMessage } from "@/shared/errors/error-message";
 import {
   ChevronLeft,
   ChevronRight,
@@ -24,7 +25,7 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
   const [selectedDocument, setSelectedDocument] = useState<ProjectDocument | null>(null);
   const [page, setPage] = useState(0);
   const { openModal, closeModal } = useModal();
-  const { data, isLoading, isError, isFetching } = useProjectDocuments(project.id, {
+  const { data, error, isLoading, isError, isFetching } = useProjectDocuments(project.id, {
     page,
     size: 5,
   });
@@ -55,7 +56,7 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
         </div>
       ) : isError ? (
         <p role="alert" className="mt-6 text-sm text-[var(--color-state-error)]">
-          We couldn’t load sources. Refresh and try again.
+          {getErrorMessage(error, "We couldn’t load sources. Refresh and try again.")}
         </p>
       ) : documents.length ? (
         <>
@@ -95,8 +96,8 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
                                   });
                                   toast.success("Source deleted.");
                                   closeModal();
-                                } catch {
-                                  toast.error("We couldn’t delete this source. Please try again.");
+                                } catch (error) {
+                                  toast.error(getErrorMessage(error, "We couldn’t delete this source. Please try again."));
                                 }
                               }}
                               type="button"

@@ -1,6 +1,7 @@
 import { Download, FileText, LoaderCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/errors/error-message";
 import { projectDocumentRepository } from "../api";
 import type { ProjectDocument } from "../model";
 
@@ -58,7 +59,7 @@ async function createPreviewData(
 export function ProjectDocumentPreview({ projectId, document, onClose }: Props) {
   const [previewData, setPreviewData] = useState<PreviewData>();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
 
   useEffect(() => {
     if (!document) return;
@@ -67,15 +68,19 @@ export function ProjectDocumentPreview({ projectId, document, onClose }: Props) 
     void Promise.resolve().then(async () => {
       if (!active) return;
       setPreviewData(undefined);
-      setError(false);
+      setErrorMessage(undefined);
       setIsLoading(true);
 
       try {
         const blob = await projectDocumentRepository.content(projectId, document.id);
         const data = await createPreviewData(document, blob);
         if (active) setPreviewData(data);
-      } catch {
-        if (active) setError(true);
+      } catch (error) {
+        if (active) {
+          setErrorMessage(
+            getErrorMessage(error, "We couldn’t load this document. Please try again."),
+          );
+        }
       } finally {
         if (active) setIsLoading(false);
       }
@@ -127,16 +132,16 @@ export function ProjectDocumentPreview({ projectId, document, onClose }: Props) 
       <section aria-labelledby="document-preview-title" aria-modal="true" className="flex h-[min(760px,calc(100vh-2rem))] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-[var(--color-bg-surface)] shadow-2xl" role="dialog">
         <PreviewHeader title={document.title} hasContent={Boolean(previewData)} onClose={onClose} onDownload={download} />
         <div className="min-h-0 flex-1 overflow-auto bg-[var(--color-bg-canvas)] p-4 sm:p-6">
-          <PreviewContent data={previewData} error={error} isLoading={isLoading} title={document.title} onDownload={download} />
+          <PreviewContent data={previewData} errorMessage={errorMessage} isLoading={isLoading} title={document.title} onDownload={download} />
         </div>
       </section>
     </div>
   );
 }
 
-function PreviewContent({ data, error, isLoading, title, onDownload }: { data?: PreviewData; error: boolean; isLoading: boolean; title: string; onDownload: () => void }) {
+function PreviewContent({ data, errorMessage, isLoading, title, onDownload }: { data?: PreviewData; errorMessage?: string; isLoading: boolean; title: string; onDownload: () => void }) {
   if (isLoading) return <div className="grid min-h-72 place-items-center"><LoaderCircle className="animate-spin text-muted" size={26} /></div>;
-  if (error) return <PreviewMessage iconClass="text-[var(--color-state-error)]" title="We couldn’t load this document." description="Please try again in a moment." />;
+  if (errorMessage) return <PreviewMessage iconClass="text-[var(--color-state-error)]" title="We couldn’t load this document." description={errorMessage} />;
   if (!data) return null;
 
   switch (data.type) {

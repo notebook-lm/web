@@ -16,9 +16,11 @@ export const passwordSchema = z
   .min(8, "Password must contain at least 8 characters.")
   .max(72, "Password must contain at most 72 characters.");
 
+export const requiredPasswordSchema = z.string().min(1, "Password is required.");
+
 export const signInSchema = z.object({
   email: emailSchema,
-  password: passwordSchema,
+  password: requiredPasswordSchema,
 });
 
 export const signUpSchema = z
@@ -51,12 +53,12 @@ export const updateProfileSchema = z.object({ displayName: displayNameSchema });
 
 export const changeEmailSchema = z.object({
   email: emailSchema,
-  currentPassword: passwordSchema,
+  currentPassword: requiredPasswordSchema,
 });
 
 export const changePasswordSchema = z
   .object({
-    currentPassword: passwordSchema,
+    currentPassword: requiredPasswordSchema,
     newPassword: passwordSchema,
     confirmPassword: passwordSchema,
   })
@@ -69,7 +71,7 @@ export const changePasswordSchema = z
   );
 
 export const deleteAccountSchema = z.object({
-  currentPassword: passwordSchema,
+  currentPassword: requiredPasswordSchema,
 });
 
 export type SignInValues = z.infer<typeof signInSchema>;

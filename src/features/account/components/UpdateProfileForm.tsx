@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
 import { paths } from "@/routes/config/paths";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import {
   updateProfileSchema,
   type UpdateProfileValues,
@@ -19,6 +20,7 @@ export function UpdateProfileForm() {
   const {
     register,
     handleSubmit,
+    setError,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<UpdateProfileValues>({
@@ -33,8 +35,9 @@ export function UpdateProfileForm() {
       await updateProfile(values);
       toast.success("Profile information saved.");
       navigate(paths.profile);
-    } catch {
-      toast.error("We couldn't save your profile. Please try again.");
+    } catch (error) {
+      if (setApiFieldErrors(error, ["displayName"] as const, setError)) return;
+      toast.error(getErrorMessage(error, "We couldn't save your profile. Please try again."));
     }
   };
   return (
@@ -58,7 +61,7 @@ export function UpdateProfileForm() {
       <form className="mt-8 w-full" onSubmit={handleSubmit(submit)}>
         <label htmlFor="profile-display-name">Display name</label>
         <input
-          className="mt-2 min-h-11 w-full rounded-lg bg-[#f4f7f4] px-3 text-sm outline-none"
+          className={`mt-2 min-h-11 w-full rounded-lg border bg-[#f4f7f4] px-3 text-sm outline-none ${errors.displayName ? "border-[#b64034]" : "border-transparent"}`}
           id="profile-display-name"
           autoFocus
           {...register("displayName")}

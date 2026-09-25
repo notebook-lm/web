@@ -5,7 +5,7 @@ import type { Project } from "../model";
 
 interface ProjectFormProps {
   project?: Project;
-  onSubmit: (values: ProjectValues) => Promise<void>;
+  onSubmit: (values: ProjectValues) => Promise<Record<string, string> | undefined>;
   isSubmitting: boolean;
 }
 
@@ -38,7 +38,14 @@ export function ProjectForm({
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) return;
 
-    await onSubmit({ title, description });
+    const serverErrors = await onSubmit({ title, description });
+    if (!serverErrors) return;
+
+    setErrors((current) => ({
+      ...current,
+      ...(serverErrors.title ? { title: serverErrors.title } : {}),
+      ...(serverErrors.description ? { description: serverErrors.description } : {}),
+    }));
   };
 
   return (
@@ -48,16 +55,17 @@ export function ProjectForm({
           Project title
         </label>
         <input
-          className="mt-2 min-h-12 w-full rounded-xl bg-[#f1f5f2] px-4 text-sm outline-none transition focus:bg-[#f1f5f2] focus:shadow-none"
+          className={`mt-2 min-h-12 w-full rounded-xl border bg-[#f1f5f2] px-4 text-sm outline-none transition focus:bg-[#f1f5f2] focus:shadow-none ${errors.title ? "border-[#b64034]" : "border-transparent"}`}
           id="project-title"
           autoFocus
           placeholder="e.g. Climate policy research"
           aria-invalid={Boolean(errors.title)}
           aria-describedby={errors.title ? "project-title-error" : undefined}
           value={values.title}
-          onChange={(event) =>
-            setValues((current) => ({ ...current, title: event.target.value }))
-          }
+          onChange={(event) => {
+            setValues((current) => ({ ...current, title: event.target.value }));
+            setErrors((current) => ({ ...current, title: undefined }));
+          }}
         />
         {errors.title && (
           <p
@@ -73,7 +81,7 @@ export function ProjectForm({
           Description <span className="font-normal text-muted">(optional)</span>
         </label>
         <textarea
-          className="mt-2 min-h-36 w-full resize-y rounded-xl bg-[#f1f5f2] px-4 py-3 text-sm outline-none transition focus:bg-[#f1f5f2] focus:shadow-none"
+          className={`mt-2 min-h-36 w-full resize-y rounded-xl border bg-[#f1f5f2] px-4 py-3 text-sm outline-none transition focus:bg-[#f1f5f2] focus:shadow-none ${errors.description ? "border-[#b64034]" : "border-transparent"}`}
           id="project-description"
           placeholder="Capture the purpose, questions, or sources for this project."
           aria-invalid={Boolean(errors.description)}
@@ -81,12 +89,13 @@ export function ProjectForm({
             errors.description ? "project-description-error" : undefined
           }
           value={values.description}
-          onChange={(event) =>
+          onChange={(event) => {
             setValues((current) => ({
               ...current,
               description: event.target.value,
-            }))
-          }
+            }));
+            setErrors((current) => ({ ...current, description: undefined }));
+          }}
         />
         {errors.description && (
           <p

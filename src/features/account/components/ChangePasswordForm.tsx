@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
 import { paths } from "@/routes/config/paths";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import {
   changePasswordSchema,
   type ChangePasswordValues,
@@ -21,6 +22,7 @@ export function ChangePasswordForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<ChangePasswordValues>({
     resolver: zodResolver(changePasswordSchema),
@@ -40,8 +42,9 @@ export function ChangePasswordForm() {
       clearAuth();
       toast.success("Password updated. Please sign in again.");
       navigate(paths.signIn, { replace: true });
-    } catch {
-      toast.error("We couldn't update your password. Please try again.");
+    } catch (error) {
+      if (setApiFieldErrors(error, ["currentPassword", "newPassword", "confirmPassword"] as const, setError)) return;
+      toast.error(getErrorMessage(error, "We couldn't update your password. Please try again."));
     }
   };
   const type = visible ? "text" : "password";
@@ -80,7 +83,7 @@ export function ChangePasswordForm() {
             <label htmlFor="current-account-password">Current password</label>
             <input
               id="current-account-password"
-              className="min-h-12 rounded-xl border border-[#e1e9e5] bg-[#f8faf8] px-4 outline-none transition focus:border-[#b9d8ce] focus:bg-white"
+              className={`min-h-12 rounded-xl border bg-[#f8faf8] px-4 outline-none transition focus:bg-white ${errors.currentPassword ? "border-[#b64034]" : "border-[#e1e9e5] focus:border-[#b9d8ce]"}`}
               type={type}
               autoComplete="current-password"
               autoFocus
@@ -92,7 +95,7 @@ export function ChangePasswordForm() {
               </p>
             )}
             <label htmlFor="new-account-password">New password</label>
-            <div className="flex min-h-12 items-center rounded-xl border border-[#e1e9e5] bg-[#f8faf8] px-4 transition focus-within:border-[#b9d8ce] focus-within:bg-white">
+            <div className={`flex min-h-12 items-center rounded-xl border bg-[#f8faf8] px-4 transition focus-within:bg-white ${errors.newPassword ? "border-[#b64034]" : "border-[#e1e9e5] focus-within:border-[#b9d8ce]"}`}>
               <input
                 id="new-account-password"
                 className="min-w-0 flex-1 bg-transparent outline-none"
@@ -116,7 +119,7 @@ export function ChangePasswordForm() {
             <label htmlFor="confirm-account-password">
               Confirm new password
             </label>
-            <div className="flex min-h-12 items-center rounded-xl border border-[#e1e9e5] bg-[#f8faf8] px-4 transition focus-within:border-[#b9d8ce] focus-within:bg-white">
+            <div className={`flex min-h-12 items-center rounded-xl border bg-[#f8faf8] px-4 transition focus-within:bg-white ${errors.confirmPassword ? "border-[#b64034]" : "border-[#e1e9e5] focus-within:border-[#b9d8ce]"}`}>
               <input
                 id="confirm-account-password"
                 className="min-w-0 flex-1 bg-transparent outline-none"

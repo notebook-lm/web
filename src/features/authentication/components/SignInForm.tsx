@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { paths } from "@/routes/config/paths";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import { signInSchema, type SignInValues } from "@/shared/utils/validators";
 import { useSignIn } from "@/features/authentication";
 
@@ -19,6 +20,7 @@ export function SignInForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
@@ -33,8 +35,9 @@ export function SignInForm() {
           paths.workspace,
         { replace: true },
       );
-    } catch {
-      // The shared HTTP client displays the API error message.
+    } catch (error) {
+      if (setApiFieldErrors(error, ["email", "password"] as const, setError)) return;
+      toast.error(getErrorMessage(error, "We couldn't sign you in. Please try again."));
     }
   };
   return (
@@ -53,7 +56,7 @@ export function SignInForm() {
       <form onSubmit={handleSubmit(submit)} noValidate className="grid gap-4">
         <label className="grid gap-2 text-xs font-bold text-[#485752]">
           Email address
-          <div className={field}>
+          <div className={`${field} ${errors.email ? "border border-[#b64034]" : ""}`}>
             <Mail size={17} />
             <input
               className="min-w-0 flex-1 outline-none"
@@ -69,7 +72,7 @@ export function SignInForm() {
         </label>
         <label className="grid gap-2 text-xs font-bold text-[#485752]">
           Password
-          <div className={field}>
+          <div className={`${field} ${errors.password ? "border border-[#b64034]" : ""}`}>
             <LockKeyhole size={17} />
             <input
               className="min-w-0 flex-1 outline-none"

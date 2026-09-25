@@ -1,6 +1,7 @@
 import { FileText, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { getApiFieldErrors, getErrorMessage } from "@/shared/errors/error-message";
 import { useUploadProjectDocument } from "../hooks";
 
 interface Props {
@@ -26,12 +27,14 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File>();
   const [title, setTitle] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const { mutateAsync: upload, isPending } = useUploadProjectDocument();
 
   const close = () => {
     if (!isPending) {
       setFile(undefined);
       setTitle("");
+      setFieldErrors({});
       onClose();
     }
   };
@@ -54,6 +57,7 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
       return;
     }
     setFile(candidate);
+    setFieldErrors((current) => ({ ...current, file: "" }));
     if (!title) setTitle(candidate.name.replace(/\.[^.]+$/, ""));
   };
 
@@ -63,9 +67,19 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
       return;
     }
 
-    await upload({ projectId, file, title: title.trim() || undefined });
-    toast.success("Source added.");
-    close();
+    try {
+      await upload({ projectId, file, title: title.trim() || undefined });
+      toast.success("Source added.");
+      close();
+    } catch (error) {
+      const nextFieldErrors = getApiFieldErrors(error, ["title", "file"]);
+      if (Object.keys(nextFieldErrors).length) {
+        setFieldErrors(nextFieldErrors);
+        return;
+      }
+
+      toast.error(getErrorMessage(error, "We couldn't upload this source. Please try again."));
+    }
   };
 
   return (
@@ -108,13 +122,17 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
           Source title <span className="font-normal">(optional)</span>
         </label>
         <input
-          className="mt-2 min-h-11 w-full rounded-lg bg-[var(--color-bg-surface-subtle)] px-3 text-sm outline-none"
+          className={`mt-2 min-h-11 w-full rounded-lg border bg-[var(--color-bg-surface-subtle)] px-3 text-sm outline-none ${fieldErrors.title ? "border-[#b64034]" : "border-transparent"}`}
           id="source-title"
           maxLength={255}
-          onChange={(event) => setTitle(event.target.value)}
+          onChange={(event) => {
+            setTitle(event.target.value);
+            setFieldErrors((current) => ({ ...current, title: "" }));
+          }}
           placeholder="Use file name"
           value={title}
         />
+        {fieldErrors.title && <p className="mt-2 text-xs text-[var(--color-state-error)]">{fieldErrors.title}</p>}
 
         <input
           ref={inputRef}
@@ -124,8 +142,9 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
           onChange={(event) => choose(event.target.files?.[0])}
           type="file"
         />
+        {fieldErrors.file && <p className="mt-3 text-xs text-[var(--color-state-error)]">{fieldErrors.file}</p>}
         <button
-          className="mt-4 grid min-h-40 w-full place-items-center rounded-xl border border-dashed border-[var(--color-border-default)] bg-[var(--color-bg-surface-subtle)] p-5 text-center hover:bg-[var(--color-bg-selected)]"
+          className={`mt-4 grid min-h-40 w-full place-items-center rounded-xl border border-dashed bg-[var(--color-bg-surface-subtle)] p-5 text-center hover:bg-[var(--color-bg-selected)] ${fieldErrors.file ? "border-[#b64034]" : "border-[var(--color-border-default)]"}`}
           onClick={() => inputRef.current?.click()}
           onDragOver={(event) => event.preventDefault()}
           onDrop={(event) => {

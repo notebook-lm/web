@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
 import { paths } from "@/routes/config/paths";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import {
   changeEmailSchema,
   type ChangeEmailValues,
@@ -18,6 +19,7 @@ export function ChangeEmailForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<ChangeEmailValues>({
     resolver: zodResolver(changeEmailSchema),
@@ -32,8 +34,9 @@ export function ChangeEmailForm() {
       clearAuth();
       toast.success("Email updated. Please sign in again.");
       navigate(paths.signIn, { replace: true });
-    } catch {
-      toast.error("Something went wrong. Please try again.");
+    } catch (error) {
+      if (setApiFieldErrors(error, ["email", "currentPassword"] as const, setError)) return;
+      toast.error(getErrorMessage(error, "We couldn't update your email. Please try again."));
     }
   };
 
@@ -80,7 +83,7 @@ export function ChangeEmailForm() {
               </label>
               <input
                 id="account-email"
-                className="min-h-12 rounded-xl border border-[#e1e9e5] bg-[#f8faf8] px-4 text-sm outline-none transition focus:border-[#b9d8ce] focus:bg-white"
+                className={`min-h-12 rounded-xl border bg-[#f8faf8] px-4 text-sm outline-none transition focus:bg-white ${errors.email ? "border-[#b64034]" : "border-[#e1e9e5] focus:border-[#b9d8ce]"}`}
                 type="email"
                 autoFocus
                 {...register("email")}
@@ -98,7 +101,7 @@ export function ChangeEmailForm() {
               </label>
               <input
                 id="email-password"
-                className="min-h-12 rounded-xl border border-[#e1e9e5] bg-[#f8faf8] px-4 text-sm outline-none transition focus:border-[#b9d8ce] focus:bg-white"
+                className={`min-h-12 rounded-xl border bg-[#f8faf8] px-4 text-sm outline-none transition focus:bg-white ${errors.currentPassword ? "border-[#b64034]" : "border-[#e1e9e5] focus:border-[#b9d8ce]"}`}
                 type="password"
                 autoComplete="current-password"
                 {...register("currentPassword")}

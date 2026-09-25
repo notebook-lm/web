@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/routes/config/paths";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
 import { useDeleteAccount } from "../hooks/mutations/useAccountMutations";
@@ -18,6 +19,7 @@ export function DeleteAccountForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<DeleteAccountValues>({
     resolver: zodResolver(deleteAccountSchema),
@@ -29,8 +31,9 @@ export function DeleteAccountForm() {
       clearAuth();
       toast.success("Your account has been deleted.");
       navigate(paths.signUp, { replace: true });
-    } catch {
-      toast.error("Something went wrong. Please try again.");
+    } catch (error) {
+      if (setApiFieldErrors(error, ["currentPassword"] as const, setError)) return;
+      toast.error(getErrorMessage(error, "We couldn't delete your account. Please try again."));
     }
   };
   return (
@@ -66,7 +69,7 @@ export function DeleteAccountForm() {
         </div>
       </div>
       <form
-        className="mt-7 grid w-full gap-3 [&>label]:text-xs [&>label]:font-bold [&>label]:text-[#485752] [&>input]:min-h-11 [&>input]:rounded-lg [&>input]:bg-[#f7f9f7] [&>input]:px-3 [&>input]:text-sm [&>input]:outline-none"
+        className="mt-7 grid w-full gap-3 [&>label]:text-xs [&>label]:font-bold [&>label]:text-[#485752] [&>input]:min-h-11 [&>input]:rounded-lg [&>input]:border [&>input]:bg-[#f7f9f7] [&>input]:px-3 [&>input]:text-sm [&>input]:outline-none"
         onSubmit={handleSubmit(submit)}
       >
         <label htmlFor="delete-account-password">
@@ -74,6 +77,7 @@ export function DeleteAccountForm() {
         </label>
         <input
           id="delete-account-password"
+          className={errors.currentPassword ? "border-[#b64034]" : "border-transparent"}
           type="password"
           autoComplete="current-password"
           autoFocus
