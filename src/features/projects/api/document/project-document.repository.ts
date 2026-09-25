@@ -48,6 +48,8 @@ export const projectDocumentRepository = {
     toProjectDocument(
       await projectDocumentApi.rename(projectId, documentId, { title }),
     ),
+  content: (projectId: string, documentId: string) =>
+    projectDocumentApi.content(projectId, documentId),
   delete: ({
     projectId,
     documentId,

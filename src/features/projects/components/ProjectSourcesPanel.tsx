@@ -1,9 +1,9 @@
-import { endpoints } from "@/lib/api";
 import { FileText, LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useDeleteProjectDocument, useProjectDocuments } from "../hooks";
+import type { Project, ProjectDocument } from "../model";
+import { ProjectDocumentPreview } from "./ProjectDocumentPreview";
 import { ProjectDocumentUpload } from "./ProjectDocumentUpload";
-import type { Project } from "../model";
 const formatSize = (bytes: number) =>
   bytes < 1024 * 1024
     ? `${Math.max(1, Math.round(bytes / 1024))} KB`
@@ -11,6 +11,7 @@ const formatSize = (bytes: number) =>
 
 export function ProjectSourcesPanel({ project }: { project: Project }) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<ProjectDocument | null>(null);
   const { data, isLoading, isError } = useProjectDocuments(project.id);
   const documents = data?.items ?? [];
   const { mutateAsync: remove } = useDeleteProjectDocument();
@@ -54,12 +55,11 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
                 className="shrink-0 text-[var(--color-text-action)]"
                 size={17}
               />
-              <a
-                className="min-w-0 text-sm font-medium"
-                href={`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"}${endpoints.projects.documentContent(project.id, document.id)}`}
-                target="_blank"
-                rel="noreferrer"
-                title={document.title}
+              <button
+                className="min-w-0 text-left text-sm font-medium"
+                onClick={() => setSelectedDocument(document)}
+                title={`Preview ${document.title}`}
+                type="button"
               >
                 <span className="line-clamp-2 break-words">
                   {document.title}
@@ -67,7 +67,7 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
                 <span className="mt-0.5 block text-xs font-normal text-muted">
                   {formatSize(document.sizeBytes)}
                 </span>
-              </a>
+              </button>
               <button
                 aria-label={`Delete ${document.title}`}
                 className="grid size-9 shrink-0 place-items-center rounded-full text-muted hover:bg-[#fff0ee] hover:text-[var(--color-state-error)]"
@@ -95,6 +95,11 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
           </div>
         </div>
       )}
+      <ProjectDocumentPreview
+        document={selectedDocument}
+        onClose={() => setSelectedDocument(null)}
+        projectId={project.id}
+      />
       <ProjectDocumentUpload
         projectId={project.id}
         open={isUploadOpen}

@@ -3,6 +3,7 @@ import type { ApiErrorResponse } from "@/shared/errors/api-error";
 
 export interface ApiClient {
   get<T>(path: string): Promise<T>;
+  getBlob(path: string): Promise<Blob>;
   post<T>(path: string, body?: unknown): Promise<T>;
   patch<T>(path: string, body?: unknown): Promise<T>;
   delete<T>(path: string, body?: unknown): Promise<T>;
@@ -19,6 +20,7 @@ export interface ApiClientOptions {
 interface RequestOptions {
   body?: unknown;
   retryAfterRefresh?: boolean;
+  responseType?: "blob";
 }
 
 export class ApiRequestError extends Error {
@@ -39,13 +41,14 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
   const request = async <T>(
     method: Method,
     path: string,
-    { body, retryAfterRefresh = true }: RequestOptions = {},
+    { body, retryAfterRefresh = true, responseType }: RequestOptions = {},
   ): Promise<T> => {
     try {
       const response = await client.request<T>({
         method,
         url: path,
         data: body,
+        responseType,
       });
 
       return response.data;
@@ -61,7 +64,11 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
       ) {
         try {
           await options.refreshAccessToken();
-          return request<T>(method, path, { body, retryAfterRefresh: false });
+          return request<T>(method, path, {
+            body,
+            retryAfterRefresh: false,
+            responseType,
+          });
         } catch (refreshError) {
           options.onRefreshFailure?.();
           throw refreshError;
@@ -75,6 +82,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
 
   return {
     get: <T>(path: string) => request<T>("GET", path),
+    getBlob: (path: string) => request<Blob>("GET", path, { responseType: "blob" }),
     post: <T>(path: string, body?: unknown) => request<T>("POST", path, { body }),
     patch: <T>(path: string, body?: unknown) =>
       request<T>("PATCH", path, { body }),

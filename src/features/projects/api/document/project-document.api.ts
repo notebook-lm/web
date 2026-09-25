@@ -43,6 +43,8 @@ export const projectDocumentApi = {
       endpoints.projects.documentById(projectId, documentId),
       payload,
     ),
+  content: (projectId: string, documentId: string) =>
+    httpClient.getBlob(endpoints.projects.documentContent(projectId, documentId)),
   delete: (projectId: string, documentId: string) =>
     httpClient.delete<void>(
       endpoints.projects.documentById(projectId, documentId),
