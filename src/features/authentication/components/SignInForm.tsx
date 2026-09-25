@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { paths } from "@/routes/config/paths";
-import { getErrorMessage } from "@/shared/errors/error-message";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import { signInSchema, type SignInValues } from "@/shared/utils/validators";
 import { useSignIn } from "@/features/authentication";
 
@@ -20,6 +20,7 @@ export function SignInForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
@@ -35,6 +36,7 @@ export function SignInForm() {
         { replace: true },
       );
     } catch (error) {
+      if (setApiFieldErrors(error, ["email", "password"] as const, setError)) return;
       toast.error(getErrorMessage(error, "We couldn't sign you in. Please try again."));
     }
   };

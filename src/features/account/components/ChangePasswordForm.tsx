@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
 import { paths } from "@/routes/config/paths";
-import { getErrorMessage } from "@/shared/errors/error-message";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import {
   changePasswordSchema,
   type ChangePasswordValues,
@@ -22,6 +22,7 @@ export function ChangePasswordForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<ChangePasswordValues>({
     resolver: zodResolver(changePasswordSchema),
@@ -42,6 +43,7 @@ export function ChangePasswordForm() {
       toast.success("Password updated. Please sign in again.");
       navigate(paths.signIn, { replace: true });
     } catch (error) {
+      if (setApiFieldErrors(error, ["currentPassword", "newPassword", "confirmPassword"] as const, setError)) return;
       toast.error(getErrorMessage(error, "We couldn't update your password. Please try again."));
     }
   };

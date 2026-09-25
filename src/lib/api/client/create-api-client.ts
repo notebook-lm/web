@@ -57,9 +57,8 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
 
       if (
         apiError.status === 401 &&
+        apiError.details?.code === "ACCESS_TOKEN_EXPIRED" &&
         retryAfterRefresh &&
-        !path.endsWith("/auth/login") &&
-        !path.endsWith("/auth/refresh") &&
         options.refreshAccessToken
       ) {
         try {
@@ -71,7 +70,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
           });
         } catch (refreshError) {
           options.onRefreshFailure?.();
-          throw refreshError;
+          throw toApiRequestError(refreshError);
         }
       }
 

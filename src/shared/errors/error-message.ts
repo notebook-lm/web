@@ -1,3 +1,4 @@
+import type { FieldValues, Path, UseFormSetError } from "react-hook-form";
 import { ApiRequestError } from "@/lib/api/client/create-api-client";
 
 export function getErrorMessage(error: unknown, fallback: string): string {
@@ -10,6 +11,39 @@ export function getErrorMessage(error: unknown, fallback: string): string {
   }
 
   return fallback;
+}
+
+export function getApiFieldErrors(
+  error: unknown,
+  fields?: readonly string[],
+): Record<string, string> {
+  if (!(error instanceof ApiRequestError)) return {};
+
+  return Object.fromEntries(
+    Object.entries(error.details?.fieldErrors ?? {}).filter(
+      ([field, message]) =>
+        (!fields || fields.includes(field)) && getNonEmptyMessage(message),
+    ),
+  ) as Record<string, string>;
+}
+
+export function setApiFieldErrors<T extends FieldValues>(
+  error: unknown,
+  fields: readonly Path<T>[],
+  setError: UseFormSetError<T>,
+): boolean {
+  const fieldErrors = getApiFieldErrors(error);
+  let hasFieldError = false;
+
+  for (const field of fields) {
+    const message = getNonEmptyMessage(fieldErrors[field]);
+    if (!message) continue;
+
+    setError(field, { type: "server", message });
+    hasFieldError = true;
+  }
+
+  return hasFieldError;
 }
 
 function getNonEmptyMessage(message: unknown): string | undefined {

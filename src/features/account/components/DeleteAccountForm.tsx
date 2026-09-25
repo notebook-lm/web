@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/routes/config/paths";
-import { getErrorMessage } from "@/shared/errors/error-message";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
 import { useDeleteAccount } from "../hooks/mutations/useAccountMutations";
@@ -19,6 +19,7 @@ export function DeleteAccountForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<DeleteAccountValues>({
     resolver: zodResolver(deleteAccountSchema),
@@ -31,6 +32,7 @@ export function DeleteAccountForm() {
       toast.success("Your account has been deleted.");
       navigate(paths.signUp, { replace: true });
     } catch (error) {
+      if (setApiFieldErrors(error, ["currentPassword"] as const, setError)) return;
       toast.error(getErrorMessage(error, "We couldn't delete your account. Please try again."));
     }
   };

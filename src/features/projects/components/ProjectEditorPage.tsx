@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { PageHeader, RouteLoading } from "@/shared/components";
-import { getErrorMessage } from "@/shared/errors/error-message";
+import { getApiFieldErrors, getErrorMessage } from "@/shared/errors/error-message";
 import type { ProjectValues } from "@/shared/utils/validators";
 import {
   useCreateProject,
@@ -45,6 +45,9 @@ export function ProjectEditorPage() {
         navigate(`/app/projects/${created.id}`, { replace: true });
       }
     } catch (error) {
+      const fieldErrors = getApiFieldErrors(error, ["title", "description"]);
+      if (Object.keys(fieldErrors).length) return fieldErrors;
+
       toast.error(getErrorMessage(error, "We couldn’t save this project. Please try again."));
     }
   };

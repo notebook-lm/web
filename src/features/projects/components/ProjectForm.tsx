@@ -5,7 +5,7 @@ import type { Project } from "../model";
 
 interface ProjectFormProps {
   project?: Project;
-  onSubmit: (values: ProjectValues) => Promise<void>;
+  onSubmit: (values: ProjectValues) => Promise<Record<string, string> | undefined>;
   isSubmitting: boolean;
 }
 
@@ -38,7 +38,14 @@ export function ProjectForm({
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) return;
 
-    await onSubmit({ title, description });
+    const serverErrors = await onSubmit({ title, description });
+    if (!serverErrors) return;
+
+    setErrors((current) => ({
+      ...current,
+      ...(serverErrors.title ? { title: serverErrors.title } : {}),
+      ...(serverErrors.description ? { description: serverErrors.description } : {}),
+    }));
   };
 
   return (
@@ -55,9 +62,10 @@ export function ProjectForm({
           aria-invalid={Boolean(errors.title)}
           aria-describedby={errors.title ? "project-title-error" : undefined}
           value={values.title}
-          onChange={(event) =>
-            setValues((current) => ({ ...current, title: event.target.value }))
-          }
+          onChange={(event) => {
+            setValues((current) => ({ ...current, title: event.target.value }));
+            setErrors((current) => ({ ...current, title: undefined }));
+          }}
         />
         {errors.title && (
           <p
@@ -81,12 +89,13 @@ export function ProjectForm({
             errors.description ? "project-description-error" : undefined
           }
           value={values.description}
-          onChange={(event) =>
+          onChange={(event) => {
             setValues((current) => ({
               ...current,
               description: event.target.value,
-            }))
-          }
+            }));
+            setErrors((current) => ({ ...current, description: undefined }));
+          }}
         />
         {errors.description && (
           <p

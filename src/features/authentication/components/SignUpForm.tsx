@@ -13,7 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useSignUp } from "@/features/authentication";
 import { paths } from "@/routes/config/paths";
-import { getErrorMessage } from "@/shared/errors/error-message";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import { signUpSchema, type SignUpValues } from "@/shared/utils/validators";
 
 const field =
@@ -27,6 +27,7 @@ export function SignUpForm() {
   const {
     register,
     handleSubmit,
+    setError,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<SignUpValues>({
@@ -50,6 +51,7 @@ export function SignUpForm() {
       toast.success("Account created. Please sign in.");
       navigate(paths.signIn, { replace: true });
     } catch (error) {
+      if (setApiFieldErrors(error, ["displayName", "email", "password", "confirmPassword"] as const, setError)) return;
       toast.error(getErrorMessage(error, "We couldn't create your account. Please try again."));
     }
   };

@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
 import { paths } from "@/routes/config/paths";
-import { getErrorMessage } from "@/shared/errors/error-message";
+import { getErrorMessage, setApiFieldErrors } from "@/shared/errors/error-message";
 import {
   updateProfileSchema,
   type UpdateProfileValues,
@@ -20,6 +20,7 @@ export function UpdateProfileForm() {
   const {
     register,
     handleSubmit,
+    setError,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<UpdateProfileValues>({
@@ -35,6 +36,7 @@ export function UpdateProfileForm() {
       toast.success("Profile information saved.");
       navigate(paths.profile);
     } catch (error) {
+      if (setApiFieldErrors(error, ["displayName"] as const, setError)) return;
       toast.error(getErrorMessage(error, "We couldn't save your profile. Please try again."));
     }
   };

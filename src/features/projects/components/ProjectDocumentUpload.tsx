@@ -1,7 +1,7 @@
 import { FileText, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { getErrorMessage } from "@/shared/errors/error-message";
+import { getApiFieldErrors, getErrorMessage } from "@/shared/errors/error-message";
 import { useUploadProjectDocument } from "../hooks";
 
 interface Props {
@@ -27,12 +27,14 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File>();
   const [title, setTitle] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const { mutateAsync: upload, isPending } = useUploadProjectDocument();
 
   const close = () => {
     if (!isPending) {
       setFile(undefined);
       setTitle("");
+      setFieldErrors({});
       onClose();
     }
   };
@@ -55,6 +57,7 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
       return;
     }
     setFile(candidate);
+    setFieldErrors((current) => ({ ...current, file: "" }));
     if (!title) setTitle(candidate.name.replace(/\.[^.]+$/, ""));
   };
 
@@ -69,6 +72,12 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
       toast.success("Source added.");
       close();
     } catch (error) {
+      const nextFieldErrors = getApiFieldErrors(error, ["title", "file"]);
+      if (Object.keys(nextFieldErrors).length) {
+        setFieldErrors(nextFieldErrors);
+        return;
+      }
+
       toast.error(getErrorMessage(error, "We couldn't upload this source. Please try again."));
     }
   };
@@ -116,10 +125,14 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
           className="mt-2 min-h-11 w-full rounded-lg bg-[var(--color-bg-surface-subtle)] px-3 text-sm outline-none"
           id="source-title"
           maxLength={255}
-          onChange={(event) => setTitle(event.target.value)}
+          onChange={(event) => {
+            setTitle(event.target.value);
+            setFieldErrors((current) => ({ ...current, title: "" }));
+          }}
           placeholder="Use file name"
           value={title}
         />
+        {fieldErrors.title && <p className="mt-2 text-xs text-[var(--color-state-error)]">{fieldErrors.title}</p>}
 
         <input
           ref={inputRef}
@@ -129,6 +142,7 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
           onChange={(event) => choose(event.target.files?.[0])}
           type="file"
         />
+        {fieldErrors.file && <p className="mt-3 text-xs text-[var(--color-state-error)]">{fieldErrors.file}</p>}
         <button
           className="mt-4 grid min-h-40 w-full place-items-center rounded-xl border border-dashed border-[var(--color-border-default)] bg-[var(--color-bg-surface-subtle)] p-5 text-center hover:bg-[var(--color-bg-selected)]"
           onClick={() => inputRef.current?.click()}
