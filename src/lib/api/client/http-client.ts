@@ -32,5 +32,5 @@ export const httpClient: ApiClient = createApiClient({
   getAccessToken: () => sessionBridge?.getAccessToken(),
   refreshAccessToken,
   onRefreshFailure: () => sessionBridge?.onRefreshFailure(),
-  onError: (error) => toast.error(error.message),
+  onError: (error) => console.log(error),
 });
