@@ -85,3 +85,11 @@ export type ChangeEmailValues = z.infer<typeof changeEmailSchema>;
 export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
 
 export type DeleteAccountValues = z.infer<typeof deleteAccountSchema>;
+
+export const documentTitleSchema = z
+  .string()
+  .trim()
+  .min(1, "Document title is required.")
+  .max(255, "Document title must contain at most 255 characters.");
+
+export type DocumentTitleValues = z.infer<typeof documentTitleSchema>;

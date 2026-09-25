@@ -17,6 +17,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^1.47.0",
     "react": "^19.2.8",
+    "react-dialog-confirm": "^2.0.0",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.88.0",
     "react-router-dom": "^7.18.4",
