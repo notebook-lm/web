@@ -1,6 +1,7 @@
 import { FileText, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/errors/error-message";
 import { useUploadProjectDocument } from "../hooks";
 
 interface Props {
@@ -63,9 +64,13 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
       return;
     }
 
-    await upload({ projectId, file, title: title.trim() || undefined });
-    toast.success("Source added.");
-    close();
+    try {
+      await upload({ projectId, file, title: title.trim() || undefined });
+      toast.success("Source added.");
+      close();
+    } catch (error) {
+      toast.error(getErrorMessage(error, "We couldn't upload this source. Please try again."));
+    }
   };
 
   return (

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { PageHeader, RouteLoading } from "@/shared/components";
+import { getErrorMessage } from "@/shared/errors/error-message";
 import type { ProjectValues } from "@/shared/utils/validators";
 import {
   useCreateProject,
@@ -27,7 +28,7 @@ export function ProjectEditorPage() {
   if (!isNew && projectQuery.isError)
     return (
       <p className="rounded-[var(--radius-xs)] bg-[var(--color-bg-surface)] p-6 text-sm text-muted">
-        We couldn’t load this project. Return to your projects and try again.
+        {getErrorMessage(projectQuery.error, "We couldn’t load this project. Return to your projects and try again.")}
       </p>
     );
   const project = projectQuery.data;
@@ -43,8 +44,8 @@ export function ProjectEditorPage() {
         toast.success("Project created.");
         navigate(`/app/projects/${created.id}`, { replace: true });
       }
-    } catch {
-      toast.error("We couldn’t save this project. Please try again.");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "We couldn’t save this project. Please try again."));
     }
   };
   const deleteProject = async () => {
@@ -57,8 +58,8 @@ export function ProjectEditorPage() {
       await remove(project.id);
       toast.success("Project deleted.");
       navigate("/app");
-    } catch {
-      toast.error("We couldn’t delete this project. Please try again.");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "We couldn’t delete this project. Please try again."));
     }
   };
 

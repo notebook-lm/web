@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/routes/config/paths";
+import { getErrorMessage } from "@/shared/errors/error-message";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
 import { useDeleteAccount } from "../hooks/mutations/useAccountMutations";
@@ -29,8 +30,8 @@ export function DeleteAccountForm() {
       clearAuth();
       toast.success("Your account has been deleted.");
       navigate(paths.signUp, { replace: true });
-    } catch {
-      toast.error("Something went wrong. Please try again.");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "We couldn't delete your account. Please try again."));
     }
   };
   return (

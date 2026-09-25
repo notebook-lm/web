@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
 import { paths } from "@/routes/config/paths";
+import { getErrorMessage } from "@/shared/errors/error-message";
 import {
   changeEmailSchema,
   type ChangeEmailValues,
@@ -32,8 +33,8 @@ export function ChangeEmailForm() {
       clearAuth();
       toast.success("Email updated. Please sign in again.");
       navigate(paths.signIn, { replace: true });
-    } catch {
-      toast.error("Something went wrong. Please try again.");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "We couldn't update your email. Please try again."));
     }
   };
 

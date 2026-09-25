@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthSession } from "@/features/authentication";
 import { paths } from "@/routes/config/paths";
+import { getErrorMessage } from "@/shared/errors/error-message";
 import {
   changePasswordSchema,
   type ChangePasswordValues,
@@ -40,8 +41,8 @@ export function ChangePasswordForm() {
       clearAuth();
       toast.success("Password updated. Please sign in again.");
       navigate(paths.signIn, { replace: true });
-    } catch {
-      toast.error("We couldn't update your password. Please try again.");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "We couldn't update your password. Please try again."));
     }
   };
   const type = visible ? "text" : "password";

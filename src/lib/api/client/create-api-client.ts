@@ -112,8 +112,18 @@ function createAxiosClient(options: ApiClientOptions): AxiosInstance {
 
 function toApiRequestError(error: unknown): ApiRequestError {
   if (!axios.isAxiosError<ApiErrorResponse>(error)) {
-    return new ApiRequestError(0, { message: "Network request failed." });
+    return new ApiRequestError(0, {
+      message: error instanceof Error ? error.message : "Network request failed.",
+    });
   }
 
-  return new ApiRequestError(error.response?.status ?? 0, error.response?.data);
+  const status = error.response?.status ?? 0;
+  const details = error.response?.data;
+
+  return new ApiRequestError(status, {
+    ...details,
+    message:
+      details?.message?.trim() ||
+      (status === 0 ? "Network request failed." : "The request could not be completed."),
+  });
 }

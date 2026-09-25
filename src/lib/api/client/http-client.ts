@@ -1,4 +1,3 @@
-import { toast } from "sonner";
 import { createApiClient, type ApiClient } from "./create-api-client";
 
 type SessionBridge = {
@@ -32,5 +31,4 @@ export const httpClient: ApiClient = createApiClient({
   getAccessToken: () => sessionBridge?.getAccessToken(),
   refreshAccessToken,
   onRefreshFailure: () => sessionBridge?.onRefreshFailure(),
-  onError: (error) => console.log(error),
 });
