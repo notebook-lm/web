@@ -61,7 +61,7 @@ export function UpdateProfileForm() {
       <form className="mt-8 w-full" onSubmit={handleSubmit(submit)}>
         <label htmlFor="profile-display-name">Display name</label>
         <input
-          className="mt-2 min-h-11 w-full rounded-lg bg-[#f4f7f4] px-3 text-sm outline-none"
+          className={`mt-2 min-h-11 w-full rounded-lg border bg-[#f4f7f4] px-3 text-sm outline-none ${errors.displayName ? "border-[#b64034]" : "border-transparent"}`}
           id="profile-display-name"
           autoFocus
           {...register("displayName")}

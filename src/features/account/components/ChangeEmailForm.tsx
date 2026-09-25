@@ -83,7 +83,7 @@ export function ChangeEmailForm() {
               </label>
               <input
                 id="account-email"
-                className="min-h-12 rounded-xl border border-[#e1e9e5] bg-[#f8faf8] px-4 text-sm outline-none transition focus:border-[#b9d8ce] focus:bg-white"
+                className={`min-h-12 rounded-xl border bg-[#f8faf8] px-4 text-sm outline-none transition focus:bg-white ${errors.email ? "border-[#b64034]" : "border-[#e1e9e5] focus:border-[#b9d8ce]"}`}
                 type="email"
                 autoFocus
                 {...register("email")}
@@ -101,7 +101,7 @@ export function ChangeEmailForm() {
               </label>
               <input
                 id="email-password"
-                className="min-h-12 rounded-xl border border-[#e1e9e5] bg-[#f8faf8] px-4 text-sm outline-none transition focus:border-[#b9d8ce] focus:bg-white"
+                className={`min-h-12 rounded-xl border bg-[#f8faf8] px-4 text-sm outline-none transition focus:bg-white ${errors.currentPassword ? "border-[#b64034]" : "border-[#e1e9e5] focus:border-[#b9d8ce]"}`}
                 type="password"
                 autoComplete="current-password"
                 {...register("currentPassword")}

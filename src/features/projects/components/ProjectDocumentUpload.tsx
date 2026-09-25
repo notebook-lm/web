@@ -122,7 +122,7 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
           Source title <span className="font-normal">(optional)</span>
         </label>
         <input
-          className="mt-2 min-h-11 w-full rounded-lg bg-[var(--color-bg-surface-subtle)] px-3 text-sm outline-none"
+          className={`mt-2 min-h-11 w-full rounded-lg border bg-[var(--color-bg-surface-subtle)] px-3 text-sm outline-none ${fieldErrors.title ? "border-[#b64034]" : "border-transparent"}`}
           id="source-title"
           maxLength={255}
           onChange={(event) => {
@@ -144,7 +144,7 @@ export function ProjectDocumentUpload({ projectId, open, onClose }: Props) {
         />
         {fieldErrors.file && <p className="mt-3 text-xs text-[var(--color-state-error)]">{fieldErrors.file}</p>}
         <button
-          className="mt-4 grid min-h-40 w-full place-items-center rounded-xl border border-dashed border-[var(--color-border-default)] bg-[var(--color-bg-surface-subtle)] p-5 text-center hover:bg-[var(--color-bg-selected)]"
+          className={`mt-4 grid min-h-40 w-full place-items-center rounded-xl border border-dashed bg-[var(--color-bg-surface-subtle)] p-5 text-center hover:bg-[var(--color-bg-selected)] ${fieldErrors.file ? "border-[#b64034]" : "border-[var(--color-border-default)]"}`}
           onClick={() => inputRef.current?.click()}
           onDragOver={(event) => event.preventDefault()}
           onDrop={(event) => {

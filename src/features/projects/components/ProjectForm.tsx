@@ -55,7 +55,7 @@ export function ProjectForm({
           Project title
         </label>
         <input
-          className="mt-2 min-h-12 w-full rounded-xl bg-[#f1f5f2] px-4 text-sm outline-none transition focus:bg-[#f1f5f2] focus:shadow-none"
+          className={`mt-2 min-h-12 w-full rounded-xl border bg-[#f1f5f2] px-4 text-sm outline-none transition focus:bg-[#f1f5f2] focus:shadow-none ${errors.title ? "border-[#b64034]" : "border-transparent"}`}
           id="project-title"
           autoFocus
           placeholder="e.g. Climate policy research"
@@ -81,7 +81,7 @@ export function ProjectForm({
           Description <span className="font-normal text-muted">(optional)</span>
         </label>
         <textarea
-          className="mt-2 min-h-36 w-full resize-y rounded-xl bg-[#f1f5f2] px-4 py-3 text-sm outline-none transition focus:bg-[#f1f5f2] focus:shadow-none"
+          className={`mt-2 min-h-36 w-full resize-y rounded-xl border bg-[#f1f5f2] px-4 py-3 text-sm outline-none transition focus:bg-[#f1f5f2] focus:shadow-none ${errors.description ? "border-[#b64034]" : "border-transparent"}`}
           id="project-description"
           placeholder="Capture the purpose, questions, or sources for this project."
           aria-invalid={Boolean(errors.description)}

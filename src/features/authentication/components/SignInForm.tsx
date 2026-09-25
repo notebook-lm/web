@@ -56,7 +56,7 @@ export function SignInForm() {
       <form onSubmit={handleSubmit(submit)} noValidate className="grid gap-4">
         <label className="grid gap-2 text-xs font-bold text-[#485752]">
           Email address
-          <div className={field}>
+          <div className={`${field} ${errors.email ? "border border-[#b64034]" : ""}`}>
             <Mail size={17} />
             <input
               className="min-w-0 flex-1 outline-none"
@@ -72,7 +72,7 @@ export function SignInForm() {
         </label>
         <label className="grid gap-2 text-xs font-bold text-[#485752]">
           Password
-          <div className={field}>
+          <div className={`${field} ${errors.password ? "border border-[#b64034]" : ""}`}>
             <LockKeyhole size={17} />
             <input
               className="min-w-0 flex-1 outline-none"

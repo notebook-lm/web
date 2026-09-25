@@ -69,7 +69,7 @@ export function DeleteAccountForm() {
         </div>
       </div>
       <form
-        className="mt-7 grid w-full gap-3 [&>label]:text-xs [&>label]:font-bold [&>label]:text-[#485752] [&>input]:min-h-11 [&>input]:rounded-lg [&>input]:bg-[#f7f9f7] [&>input]:px-3 [&>input]:text-sm [&>input]:outline-none"
+        className="mt-7 grid w-full gap-3 [&>label]:text-xs [&>label]:font-bold [&>label]:text-[#485752] [&>input]:min-h-11 [&>input]:rounded-lg [&>input]:border [&>input]:bg-[#f7f9f7] [&>input]:px-3 [&>input]:text-sm [&>input]:outline-none"
         onSubmit={handleSubmit(submit)}
       >
         <label htmlFor="delete-account-password">
@@ -77,6 +77,7 @@ export function DeleteAccountForm() {
         </label>
         <input
           id="delete-account-password"
+          className={errors.currentPassword ? "border-[#b64034]" : "border-transparent"}
           type="password"
           autoComplete="current-password"
           autoFocus
