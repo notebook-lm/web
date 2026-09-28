@@ -1,6 +1,12 @@
-import { BookOpen, MessageCircleQuestion, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/errors/error-message";
+import { conversationApi, type ChatMessageResponse } from "../api/conversation";
+import { useCreateConversation, useStreamMessage } from "../hooks";
 import type { Project } from "../model";
+import { ProjectChat } from "./ProjectChat";
+import { ProjectChatComposer } from "./ProjectChatComposer";
+import { ProjectConversationsPanel } from "./ProjectConversationsPanel";
 import { ProjectSourcesPanel } from "./ProjectSourcesPanel";
 import { ProjectStudioPanel } from "./ProjectStudioPanel";
 import { ProjectWorkspaceHeader } from "./ProjectWorkspaceHeader";
@@ -9,55 +15,118 @@ interface Props {
   project: Project;
   onOpenDetails: () => void;
 }
+
 export function ProjectWorkspace({ project, onOpenDetails }: Props) {
-  const [prompt, setPrompt] = useState("");
+  const [conversationId, setConversationId] = useState<string>();
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [pendingUserMessage, setPendingUserMessage] = useState("");
+  const [assistantMessage, setAssistantMessage] = useState<ChatMessageResponse>();
+  const activeRequest = useRef<AbortController | null>(null);
+  const assistantMessageId = useRef<string | null>(null);
+  const stoppedByUser = useRef(false);
+  const create = useCreateConversation(project.id);
+  const stream = useStreamMessage(project.id);
+
+  const cancel = async () => {
+    const controller = activeRequest.current;
+    if (!controller || stoppedByUser.current) return;
+
+    stoppedByUser.current = true;
+    setIsGenerating(false);
+    controller.abort();
+
+    const id = assistantMessageId.current;
+    const activeConversationId = conversationId;
+    if (!id || !activeConversationId) return;
+
+    try {
+      const cancelled = await conversationApi.cancelMessage(project.id, activeConversationId, id);
+      setAssistantMessage(cancelled);
+    } catch (error) {
+      toast.error(getErrorMessage(error, "We couldn’t stop this answer. Please try again."));
+    }
+  };
+
+  const send = async (content: string) => {
+    const controller = new AbortController();
+    activeRequest.current = controller;
+    assistantMessageId.current = null;
+    stoppedByUser.current = false;
+    setIsGenerating(true);
+    setPendingUserMessage(content);
+    setAssistantMessage(undefined);
+
+    try {
+      let id = conversationId;
+      if (!id) {
+        const conversation = await create.mutateAsync(content.slice(0, 48));
+        id = conversation.id;
+        setConversationId(id);
+      }
+
+      await stream.mutateAsync({
+        conversationId: id,
+        content,
+        onStarted: (message) => {
+          assistantMessageId.current = message.id;
+          setAssistantMessage(message);
+
+          if (stoppedByUser.current) {
+            void conversationApi.cancelMessage(project.id, id, message.id).then(setAssistantMessage);
+          }
+        },
+        onDelta: (delta) => {
+          if (!stoppedByUser.current) {
+            setAssistantMessage((current) => current && { ...current, content: current.content + delta });
+          }
+        },
+        onDone: (message) => setAssistantMessage(message),
+        signal: controller.signal,
+      });
+    } catch (error) {
+      if (!stoppedByUser.current && !(error instanceof DOMException && error.name === "AbortError")) {
+        toast.error(getErrorMessage(error, "We couldn’t send your question. Please try again."));
+      }
+    } finally {
+      if (!stoppedByUser.current) setIsGenerating(false);
+      setPendingUserMessage("");
+      if (activeRequest.current === controller) activeRequest.current = null;
+    }
+  };
+
   return (
-    <section className="flex min-h-svh flex-col bg-[var(--color-bg-canvas)]">
-      <ProjectWorkspaceHeader project={project} onOpenDetails={onOpenDetails} />
-      <div className="grid min-h-0 flex-1 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)_300px]">
-        <ProjectSourcesPanel project={project} />
-        <main className="flex min-w-0 flex-col px-5 py-10 sm:px-10">
-          <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center text-center">
-            <div className="flex w-full items-center justify-center gap-4">
-              <span className="grid size-12 shrink-0 place-items-center rounded-full bg-[var(--color-bg-selected)] text-[var(--color-text-action)]">
-                <BookOpen size={22} />
-              </span>
-              <h1 className="line-clamp-2 min-w-0 max-w-xl break-words font-serif text-3xl font-semibold leading-tight sm:text-4xl">
-                Start exploring <em>{project.title}.</em>
-              </h1>
-            </div>
-            <p className="mt-4 line-clamp-3 max-w-xl break-words text-sm leading-6 text-muted">
-              {project.description ||
-                "Your project is ready. Add sources when they are available, then use this canvas to guide your research."}
-            </p>
-          </div>
-          <form
-            className="mx-auto mt-8 flex w-full max-w-2xl gap-2 rounded-[var(--radius-xs)] border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-2"
-            onSubmit={(event) => event.preventDefault()}
-          >
-            <label className="sr-only" htmlFor="project-prompt">
-              Ask about this project
-            </label>
-            <MessageCircleQuestion
-              className="m-2 shrink-0 text-muted"
-              size={18}
-            />
-            <input
-              id="project-prompt"
-              value={prompt}
-              onChange={(event) => setPrompt(event.target.value)}
-              placeholder="Ask about this project"
-              className="min-w-0 flex-1 bg-transparent text-sm outline-none"
-            />
-            <button
-              disabled={!prompt.trim()}
-              className="grid size-10 place-items-center rounded-full bg-[var(--color-bg-selected)] text-[var(--color-text-action)] disabled:opacity-50"
-              aria-label="Send project question"
-            >
-              <Sparkles size={17} />
-            </button>
-          </form>
+    <section className="flex h-svh min-h-0 flex-col overflow-hidden bg-[var(--color-bg-canvas)]">
+      <ProjectWorkspaceHeader onOpenDetails={onOpenDetails} project={project} />
+      <div className="grid min-h-0 flex-1 lg:grid-cols-[290px_minmax(0,1fr)] xl:grid-cols-[290px_minmax(0,1fr)_310px]">
+        <aside className="grid min-h-0 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] border-r border-[var(--color-border-default)] bg-[var(--color-bg-surface)]">
+          <ProjectConversationsPanel
+            activeId={conversationId}
+            onSelect={(id) => {
+              setAssistantMessage(undefined);
+              setPendingUserMessage("");
+              setConversationId(id);
+            }}
+            projectId={project.id}
+          />
+          <ProjectSourcesPanel project={project} />
+        </aside>
+
+        <main className="flex min-h-0 min-w-0 flex-col px-5 py-5 sm:px-8 xl:px-10">
+          <ProjectChat
+            assistantMessage={assistantMessage}
+            conversationId={conversationId}
+            isStreaming={isGenerating}
+            pendingUserMessage={pendingUserMessage}
+            projectId={project.id}
+          />
+          <ProjectChatComposer
+            disabled={create.isPending}
+            isStreaming={isGenerating}
+            onCancel={() => void cancel()}
+            onSend={send}
+          />
         </main>
+
         <ProjectStudioPanel />
       </div>
     </section>

@@ -59,9 +59,9 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
   const { mutateAsync: remove } = useDeleteProjectDocument();
 
   return (
-    <aside
+    <section
       aria-label="Sources"
-      className="min-w-0 overflow-hidden border-b border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-4 lg:border-r lg:border-b-0"
+      className="app-scrollbar min-h-0 overflow-y-auto bg-[var(--color-bg-surface)] p-4"
     >
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold">Sources</h2>
@@ -176,6 +176,6 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
         projectId={project.id}
       />
       <ProjectDocumentUpload projectId={project.id} open={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
-    </aside>
+    </section>
   );
 }
