@@ -5,6 +5,7 @@ export interface ProjectDocumentResponse {
   originalFilename: string;
   contentType: string;
   sizeBytes: number;
+  status: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -5,6 +5,7 @@ export interface ProjectDocument {
   originalFilename: string;
   contentType: string;
   sizeBytes: number;
+  status: string;
   createdAt: Date;
   updatedAt: Date;
 }

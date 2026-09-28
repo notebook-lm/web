@@ -20,6 +20,32 @@ const formatSize = (bytes: number) =>
     ? `${Math.max(1, Math.round(bytes / 1024))} KB`
     : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 
+const documentStatus = (status: string) => {
+  const normalizedStatus = status.toUpperCase();
+
+  if (normalizedStatus === "COMPLETED") {
+    return {
+      label: "Ready",
+      className:
+        "bg-[color-mix(in_srgb,var(--color-text-action)_12%,transparent)] text-[var(--color-text-action)]",
+    };
+  }
+
+  if (normalizedStatus === "FAILED") {
+    return {
+      label: "Failed",
+      className:
+        "bg-[color-mix(in_srgb,var(--color-state-error)_12%,transparent)] text-[var(--color-state-error)]",
+    };
+  }
+
+  return {
+    label: normalizedStatus === "PENDING" ? "Pending" : "Processing",
+    className:
+      "bg-[var(--color-bg-surface-subtle)] text-muted",
+  };
+};
+
 export function ProjectSourcesPanel({ project }: { project: Project }) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<ProjectDocument | null>(null);
@@ -66,7 +92,15 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
                 <FileText className="shrink-0 text-[var(--color-text-action)]" size={17} />
                 <button className="min-w-0 text-left text-sm font-medium" onClick={() => setSelectedDocument(document)} title={`Preview ${document.title}`} type="button">
                   <span className="line-clamp-2 break-words">{document.title}</span>
-                  <span className="mt-0.5 block text-xs font-normal text-muted">{formatSize(document.sizeBytes)}</span>
+                  <span className="mt-0.5 flex items-center gap-1.5 text-xs font-normal text-muted">
+                    {formatSize(document.sizeBytes)}
+                    <span
+                      aria-label={`Status: ${documentStatus(document.status).label}`}
+                      className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${documentStatus(document.status).className}`}
+                    >
+                      {documentStatus(document.status).label}
+                    </span>
+                  </span>
                 </button>
                 <button
                   aria-label={`Delete ${document.title}`}
