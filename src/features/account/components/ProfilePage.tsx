@@ -64,7 +64,6 @@ export function ProfilePage() {
             <ProfileDetailRow
               label="Account ID"
               icon={<BadgeCheck size={18} />}
-              mono
             >
               {user.id}
             </ProfileDetailRow>
