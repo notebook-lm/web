@@ -1,0 +1,6 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/lib/query";
+import { conversationRepository } from "../../../api";
+export function useCreateConversation(projectId: string) { const queryClient = useQueryClient(); return useMutation({ mutationFn: (title?: string) => conversationRepository.create(projectId, title ? { title } : {}), onSuccess: () => void queryClient.invalidateQueries({ queryKey: queryKeys.projects.conversationsAll(projectId) }) }); }
+export function useRenameConversation(projectId: string) { const queryClient = useQueryClient(); return useMutation({ mutationFn: ({ conversationId, title }: { conversationId: string; title: string }) => conversationRepository.update(projectId, conversationId, { title }), onSuccess: () => void queryClient.invalidateQueries({ queryKey: queryKeys.projects.conversationsAll(projectId) }) }); }
+export function useDeleteConversation(projectId: string) { const queryClient = useQueryClient(); return useMutation({ mutationFn: (conversationId: string) => conversationRepository.delete(projectId, conversationId), onSuccess: () => void queryClient.invalidateQueries({ queryKey: queryKeys.projects.conversationsAll(projectId) }) }); }
