@@ -8,8 +8,8 @@ interface Props {
   projectId: string;
   conversationId?: string;
   assistantMessage?: ChatMessageResponse;
+  assistantError?: string;
   pendingUserMessage?: string;
-  isStreaming: boolean;
 }
 
 function MessageBubble({ content, role, status }: { content: string; role: string; status?: string }) {
@@ -28,7 +28,13 @@ function MessageBubble({ content, role, status }: { content: string; role: strin
   );
 }
 
-export function ProjectChat({ projectId, conversationId, assistantMessage, pendingUserMessage, isStreaming }: Props) {
+export function ProjectChat({
+  projectId,
+  conversationId,
+  assistantMessage,
+  assistantError,
+  pendingUserMessage,
+}: Props) {
   const { data, isLoading, isError, error } = useMessages(projectId, conversationId);
   const bottom = useRef<HTMLDivElement>(null);
   const localAssistantIsPersisted = data?.items.some((message) => message.id === assistantMessage?.id);
@@ -68,13 +74,19 @@ export function ProjectChat({ projectId, conversationId, assistantMessage, pendi
       {data?.items.map((message) => (
         <MessageBubble content={message.content} key={message.id} role={message.role} status={message.status} />
       ))}
-      {isStreaming && pendingUserMessage && <MessageBubble content={pendingUserMessage} role="USER" />}
+      {pendingUserMessage && <MessageBubble content={pendingUserMessage} role="USER" />}
       {assistantMessage && !localAssistantIsPersisted && (
         <MessageBubble
           content={assistantMessage.content}
           role={assistantMessage.role}
           status={assistantMessage.status}
         />
+      )}
+      {assistantError && (
+        <article className="max-w-[88%] rounded-2xl border border-[#f2cbc5] bg-[#fff7f5] px-4 py-3 text-sm leading-6 text-[var(--color-state-error)]">
+          <p className="mb-1 text-xs font-semibold opacity-70">Notebook</p>
+          <p>{assistantError}</p>
+        </article>
       )}
       <div ref={bottom} />
     </div>

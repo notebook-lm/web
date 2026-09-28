@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/errors/error-message";
 import { conversationApi, type ChatMessageResponse } from "../api/conversation";
@@ -17,15 +18,24 @@ interface Props {
 }
 
 export function ProjectWorkspace({ project, onOpenDetails }: Props) {
-  const [conversationId, setConversationId] = useState<string>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const conversationId = searchParams.get("conversation") ?? undefined;
   const [isGenerating, setIsGenerating] = useState(false);
   const [pendingUserMessage, setPendingUserMessage] = useState("");
   const [assistantMessage, setAssistantMessage] = useState<ChatMessageResponse>();
+  const [assistantError, setAssistantError] = useState("");
   const activeRequest = useRef<AbortController | null>(null);
   const assistantMessageId = useRef<string | null>(null);
   const stoppedByUser = useRef(false);
   const create = useCreateConversation(project.id);
   const stream = useStreamMessage(project.id);
+
+  const selectConversation = (id: string) => {
+    setAssistantError("");
+    setAssistantMessage(undefined);
+    setPendingUserMessage("");
+    setSearchParams({ conversation: id });
+  };
 
   const cancel = async () => {
     const controller = activeRequest.current;
@@ -55,13 +65,14 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
     setIsGenerating(true);
     setPendingUserMessage(content);
     setAssistantMessage(undefined);
+    setAssistantError("");
 
     try {
       let id = conversationId;
       if (!id) {
         const conversation = await create.mutateAsync(content.slice(0, 48));
         id = conversation.id;
-        setConversationId(id);
+        setSearchParams({ conversation: id });
       }
 
       await stream.mutateAsync({
@@ -83,13 +94,15 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
         onDone: (message) => setAssistantMessage(message),
         signal: controller.signal,
       });
+      setPendingUserMessage("");
     } catch (error) {
       if (!stoppedByUser.current && !(error instanceof DOMException && error.name === "AbortError")) {
-        toast.error(getErrorMessage(error, "We couldn’t send your question. Please try again."));
+        const message = getErrorMessage(error, "We couldn’t get an answer. Please try again.");
+        setAssistantError(message);
+        toast.error(message);
       }
     } finally {
       if (!stoppedByUser.current) setIsGenerating(false);
-      setPendingUserMessage("");
       if (activeRequest.current === controller) activeRequest.current = null;
     }
   };
@@ -99,23 +112,15 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
       <ProjectWorkspaceHeader onOpenDetails={onOpenDetails} project={project} />
       <div className="grid min-h-0 flex-1 lg:grid-cols-[290px_minmax(0,1fr)] xl:grid-cols-[290px_minmax(0,1fr)_310px]">
         <aside className="grid min-h-0 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] border-r border-[var(--color-border-default)] bg-[var(--color-bg-surface)]">
-          <ProjectConversationsPanel
-            activeId={conversationId}
-            onSelect={(id) => {
-              setAssistantMessage(undefined);
-              setPendingUserMessage("");
-              setConversationId(id);
-            }}
-            projectId={project.id}
-          />
+          <ProjectConversationsPanel activeId={conversationId} onSelect={selectConversation} projectId={project.id} />
           <ProjectSourcesPanel project={project} />
         </aside>
 
         <main className="flex min-h-0 min-w-0 flex-col px-5 py-5 sm:px-8 xl:px-10">
           <ProjectChat
+            assistantError={assistantError}
             assistantMessage={assistantMessage}
             conversationId={conversationId}
-            isStreaming={isGenerating}
             pendingUserMessage={pendingUserMessage}
             projectId={project.id}
           />
