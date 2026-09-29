@@ -9,6 +9,14 @@ export interface ConversationResponse {
   updatedAt: string;
 }
 
+export interface CitationSource {
+  citationNumber: number;
+  documentId: string;
+  filename: string;
+  chunkIndex: number;
+  excerpt: string;
+}
+
 export interface ChatMessageResponse {
   id: string;
   conversationId: string;
@@ -16,6 +24,7 @@ export interface ChatMessageResponse {
   content: string;
   status: string;
   provider?: string | null;
+  sources?: CitationSource[];
   createdAt: string;
   updatedAt: string;
 }

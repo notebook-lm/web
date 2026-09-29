@@ -91,6 +91,11 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
             setAssistantMessage((current) => current && { ...current, content: current.content + delta });
           }
         },
+        onSources: (sources) => {
+          if (!stoppedByUser.current) {
+            setAssistantMessage((current) => current && { ...current, sources });
+          }
+        },
         onDone: (message) => setAssistantMessage(message),
         signal: controller.signal,
       });

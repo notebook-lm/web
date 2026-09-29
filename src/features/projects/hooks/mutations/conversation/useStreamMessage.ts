@@ -1,19 +1,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { endpoints, getHttpAccessToken, handleHttpRefreshFailure, refreshHttpAccessToken } from "@/lib/api";
 import { queryKeys } from "@/lib/query";
-import type { ChatMessageResponse } from "../../../api/conversation";
+import type { ChatMessageResponse, CitationSource } from "../../../api/conversation";
 
 type StreamMessageInput = {
   conversationId: string;
   content: string;
   onStarted: (message: ChatMessageResponse) => void;
   onDelta: (value: string) => void;
+  onSources: (sources: CitationSource[]) => void;
   onDone: (message: ChatMessageResponse) => void;
   signal?: AbortSignal;
 };
 
 type ErrorPayload = { message?: string };
 type DeltaPayload = { delta?: string };
+type SourcesPayload = CitationSource[] | { sources?: CitationSource[] };
+
+function parseSources(value: string): CitationSource[] {
+  const payload = parseEventData<SourcesPayload>(value);
+  return Array.isArray(payload) ? payload : (payload.sources ?? []);
+}
 
 function parseEventData<T>(value: string): T {
   return JSON.parse(value) as T;
@@ -34,7 +41,7 @@ export function useStreamMessage(projectId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ conversationId, content, onStarted, onDelta, onDone, signal }: StreamMessageInput) => {
+    mutationFn: async ({ conversationId, content, onStarted, onDelta, onSources, onDone, signal }: StreamMessageInput) => {
       const request = async (retry = true): Promise<Response> => {
         const response = await fetch(
           `${import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"}${endpoints.projects.streamMessages(projectId, conversationId)}`,
@@ -89,6 +96,10 @@ export function useStreamMessage(projectId: string) {
           }
           if (event === "message") {
             onDelta(parseEventData<DeltaPayload>(data).delta ?? "");
+            continue;
+          }
+          if (event === "sources") {
+            onSources(parseSources(data));
             continue;
           }
           if (event === "done") {
