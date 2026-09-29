@@ -1,4 +1,4 @@
-import { Check, MessageSquare, Pencil, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, MessageSquare, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { getErrorMessage } from "@/shared/errors/error-message";
 import { useConversations, useCreateConversation, useDeleteConversation, useRenameConversation } from "../hooks";
@@ -10,7 +10,8 @@ interface Props {
 }
 
 export function ProjectConversationsPanel({ projectId, activeId, onSelect }: Props) {
-  const { data, isLoading, isError, error } = useConversations(projectId, { size: 100 });
+  const [page, setPage] = useState(0);
+  const { data, isLoading, isError, error, isFetching } = useConversations(projectId, { page, size: 10 });
   const create = useCreateConversation(projectId);
   const rename = useRenameConversation(projectId);
   const remove = useDeleteConversation(projectId);
@@ -35,6 +36,7 @@ export function ProjectConversationsPanel({ projectId, activeId, onSelect }: Pro
           disabled={create.isPending}
           id="new-conversation"
           onClick={() => void createConversation()}
+          type="button"
         >
           <Plus size={17} />
         </button>
@@ -66,13 +68,13 @@ export function ProjectConversationsPanel({ projectId, activeId, onSelect }: Pro
                   }}
                   value={title}
                 />
-                <button aria-label="Save conversation name" className="p-2" onClick={() => void rename.mutateAsync({ conversationId: conversation.id, title }).then(() => setEditing(undefined))}>
+                <button aria-label="Save conversation name" className="p-2" onClick={() => void rename.mutateAsync({ conversationId: conversation.id, title }).then(() => setEditing(undefined))} type="button">
                   <Check size={15} />
                 </button>
               </>
             ) : (
               <>
-                <button className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2.5 text-left text-sm" onClick={() => onSelect(conversation.id)}>
+                <button className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2.5 text-left text-sm" onClick={() => onSelect(conversation.id)} type="button">
                   <MessageSquare size={15} className="shrink-0" />
                   <span className="truncate">{conversation.title || "Untitled conversation"}</span>
                 </button>
@@ -87,6 +89,16 @@ export function ProjectConversationsPanel({ projectId, activeId, onSelect }: Pro
           </div>
         ))}
       </div>
+
+      {data && data.totalPages > 1 && (
+        <nav aria-label="Chat session pagination" className="mt-3 flex shrink-0 items-center justify-between border-t border-[var(--color-border-default)] pt-3">
+          <span className="text-xs text-muted">{data.page + 1} / {data.totalPages}</span>
+          <div className="flex gap-1">
+            <button aria-label="Previous chat session page" className="grid size-9 place-items-center rounded-full hover:bg-[var(--color-bg-surface-subtle)] disabled:cursor-not-allowed disabled:opacity-40" disabled={!data.hasPrevious || isFetching} onClick={() => setPage((current) => Math.max(0, current - 1))} type="button"><ChevronLeft size={16} /></button>
+            <button aria-label="Next chat session page" className="grid size-9 place-items-center rounded-full hover:bg-[var(--color-bg-surface-subtle)] disabled:cursor-not-allowed disabled:opacity-40" disabled={!data.hasNext || isFetching} onClick={() => setPage((current) => current + 1)} type="button"><ChevronRight size={16} /></button>
+          </div>
+        </nav>
+      )}
     </section>
   );
 }

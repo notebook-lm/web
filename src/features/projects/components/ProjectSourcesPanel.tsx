@@ -53,7 +53,7 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
   const { openModal, closeModal } = useModal();
   const { data, error, isLoading, isError, isFetching } = useProjectDocuments(project.id, {
     page,
-    size: 5,
+    size: 10,
   });
   const documents = data?.items ?? [];
   const { mutateAsync: remove } = useDeleteProjectDocument();
@@ -61,7 +61,7 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
   return (
     <section
       aria-label="Sources"
-      className="app-scrollbar min-h-0 overflow-y-auto bg-[var(--color-bg-surface)] p-4"
+      className="flex min-h-0 flex-col bg-[var(--color-bg-surface)] p-4"
     >
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold">Sources</h2>
@@ -76,17 +76,17 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
       >
         <Plus size={17} /> Add source
       </button>
-      {isLoading ? (
-        <div className="grid min-h-48 place-items-center">
-          <LoaderCircle className="animate-spin text-muted" size={22} />
-        </div>
-      ) : isError ? (
-        <p role="alert" className="mt-6 text-sm text-[var(--color-state-error)]">
-          {getErrorMessage(error, "We couldn’t load sources. Refresh and try again.")}
-        </p>
-      ) : documents.length ? (
-        <>
-          <ul className="mt-5 grid gap-2">
+      <div className="app-scrollbar mt-5 min-h-0 flex-1 overflow-y-auto pr-1">
+        {isLoading ? (
+          <div className="grid min-h-48 place-items-center">
+            <LoaderCircle className="animate-spin text-muted" size={22} />
+          </div>
+        ) : isError ? (
+          <p role="alert" className="mt-1 text-sm text-[var(--color-state-error)]">
+            {getErrorMessage(error, "We couldn’t load sources. Refresh and try again.")}
+          </p>
+        ) : documents.length ? (
+          <ul className="grid gap-2">
             {documents.map((document) => (
               <li key={document.id} className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-lg p-2 hover:bg-[var(--color-bg-surface-subtle)]">
                 <FileText className="shrink-0 text-[var(--color-text-action)]" size={17} />
@@ -143,33 +143,35 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
                       />,
                     )
                   }
+                  type="button"
                 >
                   <Trash2 size={15} />
                 </button>
               </li>
             ))}
           </ul>
-          {data && data.totalPages > 1 ? (
-            <nav aria-label="Source pagination" className="mt-4 flex items-center justify-between border-t border-[var(--color-border-default)] pt-3">
-              <span className="text-xs text-muted">{data.page + 1} / {data.totalPages}</span>
-              <div className="flex gap-1">
-                <button aria-label="Previous source page" className="grid size-8 place-items-center rounded-full hover:bg-[var(--color-bg-surface-subtle)] disabled:cursor-not-allowed disabled:opacity-40" disabled={!data.hasPrevious || isFetching} onClick={() => setPage((current) => Math.max(0, current - 1))} type="button"><ChevronLeft size={16} /></button>
-                <button aria-label="Next source page" className="grid size-8 place-items-center rounded-full hover:bg-[var(--color-bg-surface-subtle)] disabled={!data.hasNext || isFetching} disabled:cursor-not-allowed disabled:opacity-40" disabled={!data.hasNext || isFetching} onClick={() => setPage((current) => current + 1)} type="button"><ChevronRight size={16} /></button>
-              </div>
-            </nav>
-          ) : null}
-        </>
-      ) : (
-        <div className="grid min-h-48 place-items-center py-8 text-center">
-          <div>
-            <FileText className="mx-auto text-muted" size={24} />
-            <p className="mt-3 text-sm font-semibold">No sources yet</p>
-            <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-muted">
-              Add a document to start building this project’s source collection.
-            </p>
+        ) : (
+          <div className="grid min-h-48 place-items-center py-8 text-center">
+            <div>
+              <FileText className="mx-auto text-muted" size={24} />
+              <p className="mt-3 text-sm font-semibold">No sources yet</p>
+              <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-muted">
+                Add a document to start building this project’s source collection.
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
+
+      {data && data.totalPages > 1 ? (
+        <nav aria-label="Source pagination" className="mt-3 flex shrink-0 items-center justify-between border-t border-[var(--color-border-default)] pt-3">
+          <span className="text-xs text-muted">{data.page + 1} / {data.totalPages}</span>
+          <div className="flex gap-1">
+            <button aria-label="Previous source page" className="grid size-9 place-items-center rounded-full hover:bg-[var(--color-bg-surface-subtle)] disabled:cursor-not-allowed disabled:opacity-40" disabled={!data.hasPrevious || isFetching} onClick={() => setPage((current) => Math.max(0, current - 1))} type="button"><ChevronLeft size={16} /></button>
+            <button aria-label="Next source page" className="grid size-9 place-items-center rounded-full hover:bg-[var(--color-bg-surface-subtle)] disabled:cursor-not-allowed disabled:opacity-40" disabled={!data.hasNext || isFetching} onClick={() => setPage((current) => current + 1)} type="button"><ChevronRight size={16} /></button>
+          </div>
+        </nav>
+      ) : null}
       <ProjectDocumentPreview
         document={selectedDocument}
         onClose={() => setSelectedDocument(null)}
