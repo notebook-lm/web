@@ -112,3 +112,28 @@ button {
     animation-duration: 0ms !important;
   }
 }
+
+/* Keep third-party confirmation dialogs aligned with the application's light theme. */
+.dialog--panel,
+.dialog--card {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+.dialog--card--title {
+  color: var(--color-text-primary);
+}
+
+.dialog--card--description {
+  color: var(--color-text-secondary);
+}
+
+.dialog--card .remover {
+  background-color: var(--color-bg-surface-subtle);
+  color: var(--color-text-secondary);
+}
+
+.dialog--card .remover:hover {
+  background-color: var(--color-bg-selected);
+  color: var(--color-text-primary);
+}

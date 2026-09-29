@@ -131,7 +131,7 @@ export function ProjectDocumentPreview({ projectId, document, onClose }: Props) 
     <div className="fixed inset-0 z-50 grid place-items-center bg-[#15231f]/45 p-4" role="presentation" onMouseDown={(event) => event.currentTarget === event.target && onClose()}>
       <section aria-labelledby="document-preview-title" aria-modal="true" className="flex h-[min(760px,calc(100vh-2rem))] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-[var(--color-bg-surface)] shadow-2xl" role="dialog">
         <PreviewHeader title={document.title} hasContent={Boolean(previewData)} onClose={onClose} onDownload={download} />
-        <div className="min-h-0 flex-1 overflow-auto bg-[var(--color-bg-canvas)] p-4 sm:p-6">
+        <div className="min-h-0 flex-1 overflow-auto p-4 sm:p-6">
           <PreviewContent data={previewData} errorMessage={errorMessage} isLoading={isLoading} title={document.title} onDownload={download} />
         </div>
       </section>
@@ -146,9 +146,9 @@ function PreviewContent({ data, errorMessage, isLoading, title, onDownload }: { 
 
   switch (data.type) {
     case "pdf":
-      return <iframe className="h-full min-h-0 w-full rounded-lg border border-[var(--color-border-default)] bg-white" src={data.objectUrl} title={title} />;
+      return <iframe className="h-full min-h-0 w-full [color-scheme:light]" src={data.objectUrl} title={title} />;
     case "text":
-      return <pre className="h-full min-h-0 overflow-auto whitespace-pre-wrap break-words rounded-lg bg-[var(--color-bg-surface)] p-5 font-mono text-sm leading-6 text-[var(--color-text-primary)]">{data.content}</pre>;
+      return <pre className="h-full min-h-0 overflow-auto whitespace-pre-wrap break-words p-5 font-mono text-sm leading-6 text-[var(--color-text-primary)] [color-scheme:light]">{data.content}</pre>;
     case "download":
       return <DownloadFallback label={data.label} onDownload={onDownload} />;
   }
