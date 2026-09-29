@@ -17,7 +17,7 @@ function MessageBubble({ content, role, status }: { content: string; role: strin
 
   return (
     <article
-      className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-6 ${isUser ? "ml-auto bg-[var(--color-bg-selected)] text-[var(--color-text-action)]" : "bg-[var(--color-bg-surface)] shadow-sm"}`}
+      className={`max-w-[94%] rounded-2xl px-4 py-3 text-sm leading-6 sm:max-w-[88%] ${isUser ? "ml-auto bg-[var(--color-bg-selected)] text-[var(--color-text-action)]" : "bg-[var(--color-bg-surface)] shadow-sm"}`}
     >
       <p className="mb-1 text-xs font-semibold opacity-70">{isUser ? "You" : "Notebook"}</p>
       <p className="whitespace-pre-wrap">{content || (status === "STREAMING" ? "Thinking…" : "")}</p>
@@ -45,11 +45,11 @@ export function ProjectChat({
 
   if (!conversationId && !pendingUserMessage) {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center text-center">
+      <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-2 text-center sm:px-4">
         <span className="grid size-12 place-items-center rounded-full bg-[var(--color-bg-selected)] text-[var(--color-text-action)]">
           <MessageCircleQuestion size={22} />
         </span>
-        <h1 className="mt-4 text-3xl font-bold tracking-tight">Ask your sources anything.</h1>
+        <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl">Ask your sources anything.</h1>
         <p className="mt-3 max-w-lg text-sm leading-6 text-muted">
           Choose a conversation or write your first question below to explore this project.
         </p>
@@ -58,7 +58,7 @@ export function ProjectChat({
   }
 
   return (
-    <div className="app-scrollbar mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 overflow-y-auto py-4 pr-2">
+    <div className="app-scrollbar mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 overflow-y-auto py-3 pr-1 sm:gap-5 sm:py-4 sm:pr-2">
       {isLoading && <p className="text-center text-sm text-muted">Loading messages…</p>}
       {isError && (
         <p className="rounded-[var(--radius-xs)] bg-[#fff0ee] p-4 text-sm text-[var(--color-state-error)]">
@@ -83,7 +83,7 @@ export function ProjectChat({
         />
       )}
       {assistantError && (
-        <article className="max-w-[88%] rounded-2xl border border-[#f2cbc5] bg-[#fff7f5] px-4 py-3 text-sm leading-6 text-[var(--color-state-error)]">
+        <article className="max-w-[94%] rounded-2xl border border-[#f2cbc5] bg-[#fff7f5] px-4 py-3 text-sm leading-6 text-[var(--color-state-error)] sm:max-w-[88%]">
           <p className="mb-1 text-xs font-semibold opacity-70">Notebook</p>
           <p>{assistantError}</p>
         </article>

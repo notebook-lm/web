@@ -21,7 +21,7 @@ export function ProjectChatComposer({ disabled, isStreaming, onCancel, onSend }:
 
   return (
     <form
-      className="mx-auto mt-5 flex w-full max-w-3xl items-end gap-2 rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-2 shadow-[0_12px_30px_rgba(21,36,30,0.06)]"
+      className="mx-auto mt-3 flex w-full max-w-3xl items-end gap-1.5 rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-1.5 shadow-[0_12px_30px_rgba(21,36,30,0.06)] sm:mt-5 sm:gap-2 sm:p-2"
       onSubmit={(event) => {
         event.preventDefault();
         submit();

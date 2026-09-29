@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -107,16 +108,27 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
     }
   };
 
+  const [mobilePanel, setMobilePanel] = useState<"chats" | "sources" | "studio" | null>(null);
+
+  const closeMobilePanel = () => setMobilePanel(null);
+
   return (
-    <section className="flex h-svh min-h-0 flex-col overflow-hidden bg-[var(--color-bg-canvas)]">
-      <ProjectWorkspaceHeader onOpenDetails={onOpenDetails} project={project} />
-      <div className="grid min-h-0 flex-1 lg:grid-cols-[290px_minmax(0,1fr)] xl:grid-cols-[290px_minmax(0,1fr)_310px]">
-        <aside className="grid min-h-0 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] border-r border-[var(--color-border-default)] bg-[var(--color-bg-surface)]">
+    <section className="flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-[var(--color-bg-canvas)]">
+      <ProjectWorkspaceHeader
+        onOpenChats={() => setMobilePanel("chats")}
+        onOpenDetails={onOpenDetails}
+        onOpenSources={() => setMobilePanel("sources")}
+        onOpenStudio={() => setMobilePanel("studio")}
+        project={project}
+      />
+
+      <div className="grid min-h-0 flex-1 xl:grid-cols-[290px_minmax(0,1fr)_310px]">
+        <aside className="hidden min-h-0 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] border-r border-[var(--color-border-default)] bg-[var(--color-bg-surface)] xl:grid">
           <ProjectConversationsPanel activeId={conversationId} onSelect={selectConversation} projectId={project.id} />
           <ProjectSourcesPanel project={project} />
         </aside>
 
-        <main className="flex min-h-0 min-w-0 flex-col px-5 py-5 sm:px-8 xl:px-10">
+        <main className="flex min-h-0 min-w-0 flex-col px-3 py-3 sm:px-6 sm:py-5 lg:px-8 xl:px-10">
           <ProjectChat
             assistantError={assistantError}
             assistantMessage={assistantMessage}
@@ -132,8 +144,67 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
           />
         </main>
 
-        <ProjectStudioPanel />
+        <div className="hidden xl:block">
+          <ProjectStudioPanel />
+        </div>
       </div>
+
+      {mobilePanel && (
+        <div className="fixed inset-0 z-50 xl:hidden" role="presentation">
+          <button
+            aria-label="Close workspace panel"
+            className="absolute inset-0 bg-[#11221e]/35 backdrop-blur-[1px]"
+            onClick={closeMobilePanel}
+            type="button"
+          />
+          <aside
+            aria-label={
+              mobilePanel === "chats"
+                ? "Chat sessions panel"
+                : mobilePanel === "sources"
+                  ? "Sources panel"
+                  : "Studio panel"
+            }
+            aria-modal="true"
+            className="absolute inset-y-0 left-0 flex w-[min(100%,25rem)] flex-col overflow-hidden border-r border-[var(--color-border-default)] bg-[var(--color-bg-surface)] shadow-[16px_0_40px_rgba(21,36,30,0.18)]"
+            role="dialog"
+          >
+            <div className="flex min-h-16 items-center justify-between border-b border-[var(--color-border-default)] px-4 sm:px-5">
+              <p className="text-sm font-bold">
+                {mobilePanel === "chats"
+                  ? "Chat sessions"
+                  : mobilePanel === "sources"
+                    ? "Sources"
+                    : "Studio"}
+              </p>
+              <button
+                aria-label="Close workspace panel"
+                className="grid size-11 place-items-center rounded-full text-muted hover:bg-[var(--color-bg-surface-subtle)]"
+                onClick={closeMobilePanel}
+                type="button"
+              >
+                <X size={19} />
+              </button>
+            </div>
+            <div className="min-h-0 flex-1">
+              {mobilePanel === "chats" ? (
+                <ProjectConversationsPanel
+                  activeId={conversationId}
+                  onSelect={(id) => {
+                    selectConversation(id);
+                    closeMobilePanel();
+                  }}
+                  projectId={project.id}
+                />
+              ) : mobilePanel === "sources" ? (
+                <ProjectSourcesPanel project={project} />
+              ) : (
+                <ProjectStudioPanel compact />
+              )}
+            </div>
+          </aside>
+        </div>
+      )}
     </section>
   );
 }

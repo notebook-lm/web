@@ -1,19 +1,30 @@
 import { Clapperboard } from "lucide-react";
 
-export function ProjectStudioPanel() {
+interface ProjectStudioPanelProps {
+  compact?: boolean;
+}
+
+export function ProjectStudioPanel({ compact = false }: ProjectStudioPanelProps) {
   return (
     <aside
       aria-label="Studio"
-      className="flex min-h-0 flex-col border-t border-[var(--color-border-default)] bg-[var(--color-bg-surface)] xl:border-t-0 xl:border-l"
+      className={
+        compact
+          ? "rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-4 sm:p-5"
+          : "flex h-full min-h-0 flex-col border-l border-[var(--color-border-default)] bg-[var(--color-bg-surface)]"
+      }
     >
-      <div className="px-6 pb-5 pt-6">
-        <h2 className="text-2xl font-semibold tracking-tight">Studio</h2>
+      <div className={compact ? "mb-3 flex items-center justify-between" : "px-6 pb-5 pt-6"}>
+        <h2 className={compact ? "text-base font-bold" : "text-2xl font-semibold tracking-tight"}>
+          Studio
+        </h2>
+        {compact && <span className="text-xs text-muted">Create from sources</span>}
       </div>
 
-      <div className="app-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-5">
+      <div className={compact ? "" : "app-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-5"}>
         <button
           aria-label="Create video overview, coming soon"
-          className="group flex min-h-23 w-full items-center gap-4 rounded-2xl border border-[#dfe7e4] bg-[#f4faf7] px-5 text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(21,36,30,0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]"
+          className={`group flex w-full items-center gap-4 rounded-2xl border border-[#dfe7e4] bg-[#f4faf7] text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(21,36,30,0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)] ${compact ? "min-h-18 px-4 py-3" : "min-h-23 px-5"}`}
           disabled
           id="create-video-overview"
           type="button"

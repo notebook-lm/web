@@ -76,10 +76,10 @@ export function ProjectConversationsPanel({ projectId, activeId, onSelect }: Pro
                   <MessageSquare size={15} className="shrink-0" />
                   <span className="truncate">{conversation.title || "Untitled conversation"}</span>
                 </button>
-                <button aria-label="Rename conversation" className="hidden p-2 group-hover:block" onClick={() => { setEditing(conversation.id); setTitle(conversation.title); }}>
+                <button aria-label="Rename conversation" className="p-2 opacity-70 transition hover:opacity-100 xl:hidden xl:group-hover:block" onClick={() => { setEditing(conversation.id); setTitle(conversation.title); }} type="button">
                   <Pencil size={14} />
                 </button>
-                <button aria-label="Delete conversation" className="hidden p-2 text-[var(--color-state-error)] group-hover:block" onClick={() => void remove.mutateAsync(conversation.id)}>
+                <button aria-label="Delete conversation" className="p-2 text-[var(--color-state-error)] opacity-70 transition hover:opacity-100 xl:hidden xl:group-hover:block" onClick={() => void remove.mutateAsync(conversation.id)} type="button">
                   <Trash2 size={14} />
                 </button>
               </>

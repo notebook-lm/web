@@ -78,9 +78,9 @@ export function ProjectEditorPage() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="project-details-title"
-            className="fixed inset-0 z-50 grid place-items-center bg-black/30 p-4"
+            className="fixed inset-0 z-50 flex items-end bg-black/30 p-0 sm:grid sm:place-items-center sm:p-4"
           >
-            <section className="max-h-[90svh] w-full max-w-xl overflow-auto rounded-[var(--radius-xs)] border border-black/5 bg-[var(--color-bg-surface)] p-6 shadow-sm">
+            <section className="max-h-[92dvh] w-full max-w-xl overflow-auto rounded-t-[var(--radius-xs)] border border-black/5 bg-[var(--color-bg-surface)] p-5 shadow-sm sm:max-h-[90svh] sm:rounded-[var(--radius-xs)] sm:p-6">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold text-[var(--color-text-action)]">
