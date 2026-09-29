@@ -1,4 +1,4 @@
-import { ArrowLeft, Clapperboard, Files, MessageSquareText, Settings2 } from "lucide-react";
+import { ArrowLeft, Files, MessageSquareText, Settings2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Project } from "../model";
 
@@ -7,7 +7,6 @@ interface ProjectWorkspaceHeaderProps {
   onOpenDetails: () => void;
   onOpenChats: () => void;
   onOpenSources: () => void;
-  onOpenStudio: () => void;
 }
 
 export function ProjectWorkspaceHeader({
@@ -15,7 +14,6 @@ export function ProjectWorkspaceHeader({
   onOpenDetails,
   onOpenChats,
   onOpenSources,
-  onOpenStudio,
 }: ProjectWorkspaceHeaderProps) {
   return (
     <header className="flex min-h-16 items-center justify-between border-b border-[var(--color-border-default)] bg-[var(--color-bg-surface)] px-4 sm:px-6">
@@ -53,16 +51,6 @@ export function ProjectWorkspaceHeader({
         >
           <Files size={17} />
           <span className="hidden sm:inline">Sources</span>
-        </button>
-        <button
-          aria-label="Open Studio"
-          className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold hover:bg-[var(--color-bg-surface-subtle)] xl:hidden"
-          id="project-open-studio"
-          onClick={onOpenStudio}
-          type="button"
-        >
-          <Clapperboard size={17} />
-          <span className="hidden sm:inline">Studio</span>
         </button>
         <button
           id="project-details"

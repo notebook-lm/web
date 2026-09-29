@@ -53,7 +53,7 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
   const { openModal, closeModal } = useModal();
   const { data, error, isLoading, isError, isFetching } = useProjectDocuments(project.id, {
     page,
-    size: 10,
+    size: 5,
   });
   const documents = data?.items ?? [];
   const { mutateAsync: remove } = useDeleteProjectDocument();
@@ -61,7 +61,7 @@ export function ProjectSourcesPanel({ project }: { project: Project }) {
   return (
     <section
       aria-label="Sources"
-      className="flex min-h-0 flex-col bg-[var(--color-bg-surface)] p-4"
+      className="flex h-full min-h-0 min-w-0 flex-col bg-[var(--color-bg-surface)] p-4"
     >
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold">Sources</h2>

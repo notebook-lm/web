@@ -10,7 +10,6 @@ import { ProjectChat } from "./ProjectChat";
 import { ProjectChatComposer } from "./ProjectChatComposer";
 import { ProjectConversationsPanel } from "./ProjectConversationsPanel";
 import { ProjectSourcesPanel } from "./ProjectSourcesPanel";
-import { ProjectStudioPanel } from "./ProjectStudioPanel";
 import { ProjectWorkspaceHeader } from "./ProjectWorkspaceHeader";
 
 interface Props {
@@ -118,14 +117,12 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
         onOpenChats={() => setMobilePanel("chats")}
         onOpenDetails={onOpenDetails}
         onOpenSources={() => setMobilePanel("sources")}
-        onOpenStudio={() => setMobilePanel("studio")}
         project={project}
       />
 
       <div className="grid min-h-0 flex-1 xl:grid-cols-[290px_minmax(0,1fr)_310px]">
-        <aside className="hidden min-h-0 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] border-r border-[var(--color-border-default)] bg-[var(--color-bg-surface)] xl:grid">
+        <aside className="hidden min-h-0 min-w-0 border-r border-[var(--color-border-default)] bg-[var(--color-bg-surface)] xl:block">
           <ProjectConversationsPanel activeId={conversationId} onSelect={selectConversation} projectId={project.id} />
-          <ProjectSourcesPanel project={project} />
         </aside>
 
         <main className="flex min-h-0 min-w-0 flex-col px-3 py-3 sm:px-6 sm:py-5 lg:px-8 xl:px-10">
@@ -144,9 +141,9 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
           />
         </main>
 
-        <div className="hidden xl:block">
-          <ProjectStudioPanel />
-        </div>
+        <aside className="hidden min-h-0 min-w-0 border-l border-[var(--color-border-default)] bg-[var(--color-bg-surface)] xl:block">
+          <ProjectSourcesPanel project={project} />
+        </aside>
       </div>
 
       {mobilePanel && (
@@ -161,9 +158,7 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
             aria-label={
               mobilePanel === "chats"
                 ? "Chat sessions panel"
-                : mobilePanel === "sources"
-                  ? "Sources panel"
-                  : "Studio panel"
+                : "Sources panel"
             }
             aria-modal="true"
             className="absolute inset-y-0 left-0 flex w-[min(100%,25rem)] flex-col overflow-hidden border-r border-[var(--color-border-default)] bg-[var(--color-bg-surface)] shadow-[16px_0_40px_rgba(21,36,30,0.18)]"
@@ -196,10 +191,8 @@ export function ProjectWorkspace({ project, onOpenDetails }: Props) {
                   }}
                   projectId={project.id}
                 />
-              ) : mobilePanel === "sources" ? (
-                <ProjectSourcesPanel project={project} />
               ) : (
-                <ProjectStudioPanel compact />
+                <ProjectSourcesPanel project={project} />
               )}
             </div>
           </aside>

@@ -24,7 +24,7 @@ export function ProjectConversationsPanel({ projectId, activeId, onSelect }: Pro
   };
 
   return (
-    <section aria-label="Chat sessions" className="flex min-h-0 flex-col border-b border-[var(--color-border-default)] p-4">
+    <section aria-label="Chat sessions" className="flex h-full min-h-0 min-w-0 flex-col border-b border-[var(--color-border-default)] p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold">Chat sessions</h2>
