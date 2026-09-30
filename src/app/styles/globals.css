@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+:root {
+  --font-family-primary: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-family-display: "Fraunces", ui-serif, Georgia, serif;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 12px;
+  --space-6: 16px;
+  --radius-xs: 14px;
+  --radius-sm: 9999px;
+  --motion-instant: 200ms;
+  --motion-fast: 280ms;
+  --color-bg-canvas: #f7f8f5;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-subtle: #edf3f0;
+  --color-bg-selected: #d8eee7;
+  --color-text-primary: #1b2c28;
+  --color-text-secondary: #697771;
+  --color-text-action: #176b62;
+  --color-border-default: #c8d6d1;
+  --color-focus-ring: #176b62;
+  --color-state-error: #a54237;
+  --font-body: var(--font-family-primary);
+  --text-label: 13px / 20px var(--font-body);
+  --text-body: 15px / 20px var(--font-body);
+  --text-title: 16px / 24px var(--font-body);
+  --text-heading: 24px / 32px var(--font-family-display);
+  --focus-outline: 2px solid var(--color-focus-ring);
+  --focus-offset: 2px;
+}
+
+@theme {
+  --font-sans: var(--font-family-primary);
+  --font-serif: var(--font-family-display);
+  --color-canvas: var(--color-bg-canvas);
+  --color-ink: var(--color-text-primary);
+  --color-violet: var(--color-text-action);
+  --color-violet-deep: #11554e;
+  --color-muted: var(--color-text-secondary);
+}
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-bg-canvas);
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  color: var(--color-text-primary);
+  background: var(--color-bg-canvas);
+  font: var(--text-body);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:where(a, button):focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+}
+
+:where(input, textarea):focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.app-scrollbar {
+  scrollbar-color: #9eb9b1 transparent;
+  scrollbar-width: thin;
+}
+
+.app-scrollbar::-webkit-scrollbar {
+  width: 9px;
+}
+
+.app-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-scrollbar::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 9999px;
+  background: #9eb9b1;
+  background-clip: padding-box;
+}
+
+.app-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-action);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
+
+/* Keep third-party confirmation dialogs aligned with the application's light theme. */
+.dialog--panel,
+.dialog--card {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+.dialog--card--title {
+  color: var(--color-text-primary);
+}
+
+.dialog--card--description {
+  color: var(--color-text-secondary);
+}
+
+.dialog--card .remover {
+  background-color: var(--color-bg-surface-subtle);
+  color: var(--color-text-secondary);
+}
+
+.dialog--card .remover:hover {
+  background-color: var(--color-bg-selected);
+  color: var(--color-text-primary);
+}
